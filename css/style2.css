@@ -1,0 +1,323 @@
+@import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f4f1f1;
+}
+
+p {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1em;
+    font-weight: 300;
+    line-height: 1.7em;
+    color: #999;
+}
+
+a,
+a:hover,
+a:focus {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.bg-orange{
+  background: #FF5722;
+}
+
+.bg-red{
+  background: #D32F2F;
+}
+
+.navbar {
+    padding: 15px 10px;
+    background: #fff;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 40px;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+.navbar h3{
+  margin-left: 30px;
+  margin-bottom: 0;
+}
+.navbar-btn {
+    box-shadow: none;
+    outline: none !important;
+    border: none;
+}
+
+.line {
+    width: 100%;
+    height: 1px;
+    border-bottom: 1px dashed #ddd;
+    margin: 40px 0;
+}
+
+i,
+span {
+    display: inline-block;
+}
+
+/* ---------------------------------------------------
+    SIDEBAR
+----------------------------------------------------- */
+
+.wrapper {
+  display: flex;
+  align-items: stretch;
+}
+
+#sidebar {
+  min-width: 250px;
+  max-width: 250px;
+  background: #24262e;
+  color: #ababab;
+  transition: all 0.3s;
+}
+
+#sidebar h3{
+  color: #fff;
+}
+
+#sidebar.active {
+  min-width: 80px;
+  max-width: 80px;
+  text-align: center;
+}
+
+#sidebar.active .sidebar-header h3{
+  display: none;
+}
+
+#sidebar.active .sidebar-header strong {
+  display: block;
+}
+
+
+#sidebar.active ul li a {
+    padding: 20px 10px;
+    text-align: center;
+    font-size: 0.85em;
+}
+
+#sidebar.active #delete-reservations{
+    font-size: 0.65em;
+}
+
+#sidebar ul li .btn-action{
+  background: #181b20;
+  margin: 5px 8px;
+  border-radius: 10px;
+  font-size: 1em;
+}
+
+#sidebar ul li .btn-action:hover{
+  color: #000;
+  background: #f4f1f1;
+}
+#sidebar.active ul li a i {
+    margin-right: 0;
+    display: block;
+    font-size: 1.8em;
+    margin-bottom: 5px;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: #24262e;
+}
+
+#sidebar .sidebar-header strong {
+    display: none;
+    font-size: 1.8em;
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #fff;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+}
+
+#sidebar ul li a:hover {
+    color: #fff;
+    background: #181b20;
+}
+
+#sidebar ul li a i {
+    margin-right: 10px;
+    color: #007bff;
+}
+
+#sidebar ul li.active>a{
+    color: #fff;
+    background: #181b20;
+}
+
+/* ---------------------------------------------------
+    BODY
+----------------------------------------------------- */
+
+#content {
+    width: 100%;
+    padding: 20px;
+    min-height: 100vh;
+    transition: all 0.3s;
+}
+
+.body{
+  display: flex;
+  margin-top: 4%;
+}
+
+table.seat-grid{
+  margin-left: 2%;
+  margin-right: 2%;
+}
+.my-checkbox input{
+  display: none;
+}
+
+.my-checkbox img{
+  width: 50px;
+  height: 50px;
+  transition: .2s;
+}
+.my-checkbox img:hover{
+  background:#e2e2e2;
+}
+.my-checkbox :checked+label img{
+  content: url(../icons/my_seat.png);
+  width: 45px;
+  height: 45px;
+}
+
+.my-checkbox[disabled] img{
+  content: url(../icons/disabled_seat.png);
+  width: 45px;
+  height: 45px;
+}
+
+.my-checkbox[disabled][state="bought"] img{
+  content: url(../icons/bought_seat.png);
+}
+
+.my-checkbox[disabled][state="preordered"] img{
+  content: url(../icons/preordered_seat.png);
+}
+
+.seat-grid th{
+  text-align: center;
+  padding-bottom: 10px;
+}
+.seat-grid-middle{
+  padding: 0 20px;
+}
+
+.seat-grid-col{
+  padding-right: 20px;
+}
+
+.myborder-left{
+  border-left: 2px solid #616161;
+  padding-left: 10px;
+}
+
+.myborder-right{
+  border-right: 2px solid #616161;
+  padding-right: 10px;
+}
+
+.legend{
+  margin-top: 15%;
+}
+.lenged-item img, p{
+  display: inline;
+
+}
+.body-right, .seat-grid{
+  flex: 1;
+}
+
+.body-right{
+  text-align: center;
+  padding: 50px;
+}
+
+.logged{
+  margin-left: 100px;
+}
+.body-right h4{
+  margin-top: 20px;
+}
+.body-right i{
+  color: #FBC02D;
+  font-size: 50px;
+}
+
+.body-right .summary{
+  text-align: right;
+  margin-top: 10px;
+}
+
+.body-right .summary .summary-item{
+  margin-top: 20px;
+}
+#seat-summary{
+  color: #007bff;
+}
+
+#btn-prenota{
+  margin-top: 40px;
+}
+
+
+/* ---------------------------------------------------
+   POPUP
+----------------------------------------------------- */
+.popup{
+  background: rgba(0, 0, 0, 0.6);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content{
+  position: relative;
+  padding: 10px 30px 50px;
+  height: 400px;
+  width: 650px;
+  background: #fff;
+  border-radius: 10px;
+}
+
+.popup-title{
+  text-align: center;
+  margin-bottom: 30px;
+}
+.popup-title img, h3{
+  margin: 0;
+  padding: 0;
+  display: inline;
+}
+
+.close-popup{
+
+  font-size: 25px;
+  border-radius: 50%;
+  color: #ababab;
+  float: right;
+  transition: .2s;
+}
+
+.close-popup:hover{
+  color: red;
+}
