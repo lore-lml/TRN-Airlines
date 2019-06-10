@@ -215,8 +215,10 @@ table.seat-grid{
   content: url(../icons/preordered_seat.png);
 }
 
+table.seat-grid tr{
+    text-align: center;
+}
 .seat-grid th{
-  text-align: center;
   padding-bottom: 10px;
 }
 .seat-grid-middle{
