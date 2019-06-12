@@ -187,32 +187,36 @@ table.seat-grid{
   display: none;
 }
 
-.my-checkbox img{
-  width: 50px;
-  height: 50px;
-  transition: .2s;
+.my-checkbox label{
+    content: url(../icons/free_seat.png);
+    width: 50px;
+    height: 50px;
+    transition: .2s;
 }
-.my-checkbox img:hover{
-  background:#e2e2e2;
+.my-checkbox label:hover{
+    background:#e2e2e2;
 }
-.my-checkbox :checked+label img{
-  content: url(../icons/my_seat.png);
-  width: 45px;
-  height: 45px;
-}
-
-.my-checkbox[disabled] img{
-  content: url(../icons/disabled_seat.png);
-  width: 45px;
-  height: 45px;
+.my-checkbox :checked+label{
+    content: url(../icons/my_seat.png);
+    width: 45px;
+    height: 45px;
 }
 
-.my-checkbox[disabled][state="bought"] img{
-  content: url(../icons/bought_seat.png);
+.my-checkbox[disabled] label{
+    width: 45px;
+    height: 45px;
 }
 
-.my-checkbox[disabled][state="preordered"] img{
-  content: url(../icons/preordered_seat.png);
+.my-checkbox[disabled][state="unavailable"] label{
+    content: url(../icons/disabled_seat.png);
+}
+
+.my-checkbox[disabled][state="bought"] label{
+    content: url(../icons/bought_seat.png);
+}
+
+.my-checkbox[disabled][state="preordered"] label{
+    content: url(../icons/preordered_seat.png);
 }
 
 table.seat-grid tr{
@@ -327,4 +331,10 @@ table.seat-grid tr{
 
 .close-popup:hover{
   color: red;
+}
+
+
+#register-popup .popup-content{
+    height: 600px;
+    width: 850px;
 }
