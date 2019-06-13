@@ -1,5 +1,6 @@
 <?php
 include_once "server.php";
+include_once "user.php";
 global $result;
 
 $json = $_POST["method"]();
@@ -20,6 +21,9 @@ function registerUser(){
             throw new Exception();
         }else if(!isset($_POST['psw1'])){
             $result['cause'] = "no_psw1";
+            throw new Exception();
+        }else if(!validatePassword($_POST['psw1'])){
+            $result['cause'] = "invalid_psw";
             throw new Exception();
         }else if(!isset($_POST['psw2'])){
             $result['cause'] = "no_psw2";
@@ -50,8 +54,8 @@ function registerUser(){
         }
 
         session_start();
-        $_SESSION['user'] = $email;
-        $_SESSION['name'] = $name;
+        $user = new user($email, $name);
+        $_SESSION['user'] = $user;
         $result['result'] = true;
     }catch (Exception $e){
         $result['result'] = false;
@@ -99,8 +103,8 @@ function login(){
         }
 
         session_start();
-        $_SESSION['user'] = $email;
-        $_SESSION['name'] = $name;
+        $user = new user($email, $name);
+        $_SESSION['user'] = $user;
         $result['result'] = true;
     }catch (Exception $e){
         $result['result'] = false;
@@ -108,6 +112,24 @@ function login(){
 
     mysqli_close($conn);
     return json_encode($result);
+}
+
+function validatePassword(string $psw): bool{
+    $lower = false;
+    $upperOrDigit = false;
+
+    for($i = 0; $i < strlen($psw); $i++){
+        $char = $psw{$i};
+        if(is_numeric($char) || $char === strtoupper($char))
+            $upperOrDigit = true;
+        if($char === strtolower($char))
+            $lower = true;
+
+        if($lower && $upperOrDigit)
+            return true;
+    }
+
+    return false;
 }
 
 function logout(){

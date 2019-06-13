@@ -5,15 +5,13 @@ class seat
 {
     private $id;
     private $state;
+    private $user_email;
 
-    public function __construct($id , $state)
+    public function __construct(string $id ,string $state, string $user_email)
     {
-        if(!is_string($id) || !is_string($state)){
-            throw new InvalidArgumentException("Parameters must be strings");
-        }
-
         $this->id = $id;
         $this->state = $state;
+        $this->user_email = $user_email;
     }
 
 
@@ -22,10 +20,14 @@ class seat
         return $this->id;
     }
 
-
     public function getState(): string
     {
         return $this->state;
+    }
+
+    public function getUserEmail(): string
+    {
+        return $this->user_email;
     }
 
     function __destruct()

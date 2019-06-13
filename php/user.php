@@ -5,11 +5,13 @@ class user
 {
     private $email;
     private $seats;
+    private $name;
     private $cnt;
 
-    function __construct($email)
+    function __construct(string $email, string $name)
     {
         $this->email = $email;
+        $this->name = $name;
         $this->seats = array();
         $this->cnt = 0;
     }
@@ -21,9 +23,15 @@ class user
         $this->cnt++;
     }
 
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
+    }
+
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
 

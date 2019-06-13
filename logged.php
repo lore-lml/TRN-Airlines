@@ -1,4 +1,5 @@
-<?php include_once "php/server.php" ?>
+<?php include_once "php/server.php";
+include_once "php/user.php";?>
 <!DOCTYPE html>
 <html>
 
@@ -22,7 +23,10 @@
         <div class="sidebar-header">
             <h3>
                 <img src="icons/airplane.png" width="30" height="30" class="d-inline-block align-top" alt="">
-                <?php echo $_SESSION['name'] ?>
+                <?php
+                    $user = $_SESSION['user'];
+                    echo $user->{"getName"}();
+                ?>
             </h3>
             <strong>
                 <img src="icons/airplane.png" width="30" height="30" class="d-inline-block align-top" alt="">

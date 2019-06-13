@@ -66,7 +66,13 @@ function registerUser(){
     if(psw1 == ""){
         $("#warningPsw1").text("Password non inserita");
         return;
-    }else{$("#warningPsw1").text("");}
+    }else{
+        if(!validatePassword(psw1))    {
+            $("#warningPsw1").text("La password deve contenere almeno un carattere minuscolo e almeno un carattere maiuscolo o numerico");
+            return;
+        }else
+            $("#warningPsw1").text("");
+    }
 
     if(psw2 == ""){
         $("#warningPsw2").text("Password non inserita");
@@ -115,6 +121,9 @@ function doRegisterRequest(name, email, psw1, psw2){
                 case "user_exist":
                     $("#warningEmail").text("Email già esistente");
                     break;
+                case "invalid_psw":
+                    $("#warningPsw1").text("La password deve contenere almeno un carattere minuscolo e almeno un carattere maiuscolo o numerico");
+                    break;
                 default:
                     $("#warningDefault").text("Qualcosa è andato storto");
                     break;
@@ -128,6 +137,27 @@ function doRegisterRequest(name, email, psw1, psw2){
 function validateEmail(email){
     let emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return email.match(emailRegex);
+}
+
+function validatePassword(psw){
+    if (typeof psw !== 'string') {
+        throw "Psw parameter must be a string"
+    }
+    let lower = false;
+    let upperOrDigit = false;
+
+    for(let i = 0; i< psw.length ; i++){
+        let char = psw.charAt(i);
+        if(!isNaN(char) || char === char.toUpperCase())
+            upperOrDigit = true;
+        if(char === char.toLowerCase())
+            lower = true;
+
+        if(lower && upperOrDigit)
+            return true;
+    }
+
+    return false;
 }
 
 function getRegisterJSON(method, name, email, psw1, psw2){

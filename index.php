@@ -7,4 +7,3 @@ if (initPage() == true)
     include "logged.php";
 else
     include "not_logged.php";
-?>
