@@ -34,6 +34,8 @@ $(document).ready(function () {
 
     $('#registerBtn').click(registerUser);
 
+    $('#loginBtn').click(login);
+
     $('#logout-btn').click(logout)
 
 });
@@ -53,8 +55,7 @@ function registerUser(){
         $("#warningEmail").text("Email non inserita");
         return;
     }else{
-        let emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        if(!email.match(emailRegex)){
+        if(!validateEmail(email)){
             //show warning
             $("#warningEmail").text("Email non valida");
             return;
@@ -93,14 +94,17 @@ function doRegisterRequest(name, email, psw1, psw2){
             let cause = data["cause"];
 
             switch (cause) {
+                case "db_error":
+                    $("#warningDefault").text("Connessione al database rifiutata");
+                    break;
                 case "no_email":
                     $("#warningEmail").text("Email non inserita o non valida");
                     break;
                 case "no_psw1":
-                    $("#warningPsw1").text("Password non inserita</>");
+                    $("#warningPsw1").text("Password non inserita");
                     break;
                 case "no_psw2":
-                    $("#warningPsw2").text("Password non inserita</>");
+                    $("#warningPsw2").text("Password non inserita");
                     break;
                 case "empty_name":
                     $("#warningName").text("Nome non inserito");
@@ -112,10 +116,18 @@ function doRegisterRequest(name, email, psw1, psw2){
                     $("#warningEmail").text("Email già esistente");
                     break;
                 default:
-                    $("#register-popup").append("<p>Qualcosa è andato storto</p>")
+                    $("#warningDefault").text("Qualcosa è andato storto");
                     break;
             }
+        })
+        .fail(function () {
+            $("#warningDefault").text("Qualcosa è andato storto");
         });
+}
+
+function validateEmail(email){
+    let emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return email.match(emailRegex);
 }
 
 function getRegisterJSON(method, name, email, psw1, psw2){
@@ -126,6 +138,69 @@ function getRegisterJSON(method, name, email, psw1, psw2){
         psw1: psw1,
         psw2: psw2
     };
+}
+
+function login(){
+    let email = $('#loginEmail').val();
+    let psw = $('#loginPassword').val();
+
+    if(email == ""){
+        $("#warningEmail-log").text("Email non inserita");
+        return;
+    }else{
+        if(!validateEmail(email)){
+            //show warning
+            $("#warningEmail-log").text("Email non valida");
+            return;
+        }else
+            $("#warningEmail-log").text("");
+    }
+
+    if(psw == ""){
+        $("#warningPsw-log").text("Password non inserita");
+        return;
+    }else
+        $("#warningPsw-log").text("");
+
+    doLoginRequest(email, psw);
+}
+
+function doLoginRequest(email, psw) {
+    $.post("php/ajax_request.php",
+        {
+            method: "login",
+            email: email,
+            psw: psw
+        })
+        .done(function (data) {
+            data = JSON.parse(data);
+            let res = data["result"];
+            if(res) {
+                location.reload();
+                return;
+            }
+            let cause = data["cause"];
+            switch (cause) {
+                case "db_error":
+                    $("#warningDefault-log").text("Connessione al database rifiutata");
+                    break;
+                case "no_email":
+                    $("#warningEmail-log").text("Email non inserita o non valida");
+                    break;
+                case "no_psw":
+                    $("#warningPsw-log").text("Password non inserita");
+                    break;
+                case "mismatch":
+                    $("#warningDefault-log").text("Email o password errati");
+                    break;
+                default:
+                    $("#warningDefault-log").text("Qualcosa è andato storto");
+                    break;
+            }
+        })
+        .fail(function () {
+            $("#warningDefault-log").text("Qualcosa è andato storto");
+        });
 }
 
 function logout() {

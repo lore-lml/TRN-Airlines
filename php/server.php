@@ -58,9 +58,11 @@ function printSeatsGrid(){
         for($i = 0; $i < $_N; $i++){
             $string =   '<tr>
                             <th class="seat-grid-col">' .($i+1) .'</th>';
-            for($j = 0, $col='A'; $j < $_M; $j++){
+            for($j = 0, $col='A'; $j < $_M; $j++, $col++){
                 if($j == $_M/2)
                     $string .= '<td class="seat-grid-middle"></td>';
+
+                $id = "seat$col".($i+1);
 
                 $string .= '<td class="my-checkbox';
                 if($j == 0)
@@ -68,9 +70,9 @@ function printSeatsGrid(){
                 else if($j == $_M-1)
                     $string .= ' myborder-right';
 
-                $string .= '"disabled state="unavailable" id="seat'.$col.$j.'">
-                                <input type="checkbox" disabled autocomplete="off"/>
-                                <label for="myCheckbox1c"></label>
+
+                $string .= '" disabled state="unavailable"><input type="checkbox" disabled id="'.$id.'" autocomplete="off"/>
+                              <label for="'.$id.'"></label>
                             </td>';
             }
             $string .= '</tr>';

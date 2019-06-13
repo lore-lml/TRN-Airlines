@@ -34,12 +34,6 @@ function registerUser(){
         $psw1 = $_POST['psw1'];
         $psw2 = $_POST['psw2'];
 
-        $user = userExist($conn, $email);
-        if($user != false){
-            $result['cause'] = "user_exist";
-            throw new Exception();
-        }
-
         if($psw1 != $psw2){
             $result['cause'] = "psw_mismatch";
             throw new Exception();
@@ -49,8 +43,9 @@ function registerUser(){
         $stmt = mysqli_prepare($conn, $sql);
         mysqli_stmt_bind_param($stmt, "sss", $email, $psw1, $name);
 
+        //UTENTE GIA ESISTENTE
         if(!mysqli_stmt_execute($stmt)){
-            $result['cause'] = "db_error";
+            $result['cause'] = "user_exist";
             throw new Exception();
         }
 
@@ -66,19 +61,53 @@ function registerUser(){
     return json_encode($result);
 }
 
-function userExist($conn, $email): bool{
-    $sql = "SELECT COUNT(*) FROM users WHERE email = ? LIMIT 1";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "s", $email);
-    mysqli_stmt_execute($stmt);
+function login(){
+    global $result;
+    $conn = connectDb();
 
-    mysqli_stmt_bind_result($stmt, $cnt);
-    mysqli_stmt_fetch($stmt);
-    $result = true;
-    if($cnt == null)
-        $result = false;
-    mysqli_stmt_close($stmt);
-    return $result;
+    if(!$conn){
+        $result['cause'] = "db_error";
+        return json_encode($result);
+    }
+
+    try{
+        if(!isset($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){
+            $result['cause'] = "no_email";
+            throw new Exception();
+        }else if(!isset($_POST['psw'])){
+            $result['cause'] = "no_psw";
+            throw new Exception();
+        }
+
+        $email = mysqli_real_escape_string($conn, $_POST['email']);
+        $psw = sha1($_POST['psw']);
+
+        $sql = "SELECT name, password FROM users WHERE email = ? LIMIT 1";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "s", $email);
+
+        if(!mysqli_stmt_execute($stmt)){
+            $result['cause'] = "user_exist";
+            throw new Exception();
+        }
+
+        mysqli_stmt_bind_result($stmt, $name, $password);
+        mysqli_stmt_fetch($stmt);
+        if($name == null || $psw !== $password){
+            $result['cause'] = "mismatch";
+            throw new Exception();
+        }
+
+        session_start();
+        $_SESSION['user'] = $email;
+        $_SESSION['name'] = $name;
+        $result['result'] = true;
+    }catch (Exception $e){
+        $result['result'] = false;
+    }
+
+    mysqli_close($conn);
+    return json_encode($result);
 }
 
 function logout(){

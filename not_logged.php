@@ -112,21 +112,24 @@
             <h3>TRN Airlines</h3>
         </div>
 
-        <form>
-            <div class="form-group">
-                <label for="loginEmail">Email</label>
-                <input type="email" class="form-control" id="loginEmail" aria-describedby="emailHelp" placeholder="Inserisci la tua email">
-            </div>
-            <div class="form-group">
-                <label for="loginPassword">Password</label>
-                <input type="password" class="form-control" id="loginPassword" placeholder="Password">
-            </div>
-            <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="loginCheck">
-                <label class="form-check-label" for="loginCheck">Ricordami</label>
-            </div>
-            <button type="submit" class="btn btn-outline-primary">Login</button>
-        </form>
+
+        <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <input type="email" class="form-control" id="loginEmail" aria-describedby="emailHelp" placeholder="Inserisci la tua email">
+            <p class="warning-field" id="warningEmail-log"></p>
+        </div>
+        <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input type="password" class="form-control" id="loginPassword" placeholder="Password">
+            <p class="warning-field" id="warningPsw-log"></p>
+        </div>
+        <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="loginCheck">
+            <label class="form-check-label" for="loginCheck">Ricordami</label>
+        </div>
+        <button class="btn btn-outline-primary" id="loginBtn">Login</button>
+        <p class="warning-field" id="warningDefault-log"></p>
+
     </div>
 </div>
 
@@ -142,25 +145,25 @@
         <div class="form-group">
             <label for="registerName">Nome</label>
             <input type="text" class="form-control" id="registerName" placeholder="Inserisci il tuo nome">
-            <p id="warningName"></p>
+            <p class="warning-field" id="warningName"></p>
         </div>
         <div class="form-group">
             <label for="registerEmail">Email</label>
             <input type="email" class="form-control" id="registerEmail" aria-describedby="emailHelp" placeholder="Inserisci la tua email">
-            <p id="warningEmail"></p>
+            <p class="warning-field" id="warningEmail"></p>
         </div>
         <div class="form-group">
             <label for="registerPassword">Password</label>
             <input type="password" class="form-control" id="registerPassword" placeholder="Password">
-            <p id="warningPsw1"></p>
+            <p class="warning-field" id="warningPsw1"></p>
         </div>
         <div class="form-group">
             <label for="registerPassword2">Reinserisci password</label>
             <input type="password" class="form-control" id="registerPassword2" placeholder="Password">
-            <p id="warningPsw2"></p>
+            <p class="warning-field" id="warningPsw2"></p>
         </div>
         <button class="btn btn-outline-primary" id="registerBtn">Registrati</button>
-
+        <p class="warning-field" id="warningDefault"></p>
     </div>
 </div>
 

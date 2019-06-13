@@ -188,18 +188,25 @@ table.seat-grid{
 }
 
 .my-checkbox label{
-    content: url(../icons/free_seat.png);
+    background: url(../icons/free_seat.png) no-repeat center;
+    background-size: cover;
     width: 50px;
     height: 50px;
     transition: .2s;
 }
 .my-checkbox label:hover{
-    background:#e2e2e2;
+    background: #e2e2e2 url(../icons/free_seat.png) no-repeat center;
+    background-size: cover;
 }
 .my-checkbox :checked+label{
-    content: url(../icons/my_seat.png);
+    background: url(../icons/my_seat.png) no-repeat center;
+    background-size: cover;
     width: 45px;
     height: 45px;
+}
+.my-checkbox :checked+label:hover{
+    background: #e2e2e2 url(../icons/my_seat.png) no-repeat center;
+    background-size: cover;
 }
 
 .my-checkbox[disabled] label{
@@ -208,15 +215,33 @@ table.seat-grid{
 }
 
 .my-checkbox[disabled][state="unavailable"] label{
-    content: url(../icons/disabled_seat.png);
+    background: url(../icons/disabled_seat.png) no-repeat center;
+    background-size: cover;
+}
+
+.my-checkbox[disabled][state="unavailable"] label:hover{
+    background: #e2e2e2 url(../icons/disabled_seat.png) no-repeat center;
+    background-size: cover;
 }
 
 .my-checkbox[disabled][state="bought"] label{
-    content: url(../icons/bought_seat.png);
+    background: url(../icons/bought_seat.png) no-repeat center;
+    background-size: cover;
+}
+
+.my-checkbox[disabled][state="bought"] label:hover{
+    background: #e2e2e2 url(../icons/bought_seat.png) no-repeat center;
+    background-size: cover;
 }
 
 .my-checkbox[disabled][state="preordered"] label{
-    content: url(../icons/preordered_seat.png);
+    background: url(../icons/preordered_seat.png) no-repeat center;
+    background-size: cover;
+}
+
+.my-checkbox[disabled][state="preordered"] label:hover{
+    background: #e2e2e2 url(../icons/preordered_seat.png) no-repeat center;
+    background-size: cover;
 }
 
 table.seat-grid tr{
@@ -337,4 +362,9 @@ table.seat-grid tr{
 #register-popup .popup-content{
     height: 600px;
     width: 850px;
+}
+
+.warning-field{
+    font-size: 1em;
+    color: red;
 }

@@ -22,7 +22,7 @@
         <div class="sidebar-header">
             <h3>
                 <img src="icons/airplane.png" width="30" height="30" class="d-inline-block align-top" alt="">
-                Utente 1
+                <?php echo $_SESSION['name'] ?>
             </h3>
             <strong>
                 <img src="icons/airplane.png" width="30" height="30" class="d-inline-block align-top" alt="">
