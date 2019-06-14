@@ -174,7 +174,6 @@ function userExist($link, $email) : bool{
 }
 
 function preorderSeat(){
-    //TODO: Controllare che l'id sia nei range della tabella
     global $result;
     session_start();
 
@@ -195,6 +194,11 @@ function preorderSeat(){
 
         if(!userExist($conn, $email)){
             $result['cause'] = "invalid_email";
+            throw new Exception();
+        }
+
+        if(!validateId($id)){
+            $result['cause'] = "invalid_id";
             throw new Exception();
         }
 
@@ -252,7 +256,6 @@ function preorderSeat(){
 }
 
 function cancelSeat(){
-    //TODO: Controllare che l'id sia nei range della tabella
     global $result;
     session_start();
 
@@ -273,6 +276,11 @@ function cancelSeat(){
 
         if(!userExist($conn, $email)){
             $result['cause'] = "invalid_email";
+            throw new Exception();
+        }
+
+        if(!validateId($id)){
+            $result['cause'] = "invalid_id";
             throw new Exception();
         }
 

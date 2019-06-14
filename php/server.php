@@ -6,9 +6,9 @@ define('host', 'localhost');
 define('admin', 'root');
 define('psw', '');
 define('db', 'trnairlines');
+define('COL', '6');
+define('ROW', '10');
 
-global $_M;
-global $_N;
 global $_seatsMap;
 global $_numberOfSeatsPerState;
 
@@ -24,10 +24,6 @@ function redirectHTTPSifNeeded(){
 };
 
 function initPage(){
-    global $_M, $_N, $_logged;
-
-    $_M = 6;
-    $_N = 10;
     session_start();
     return isset($_SESSION['user']);
 };
@@ -38,13 +34,13 @@ function connectDb(){
 };
 
 function printSeatsGrid(){
-    global $_M, $_N;
+    global $_seatsMap;
 
     $string = '<tr>
                  <th class="seat-grid-col"></th>';
 
-    for($i = 0, $col = 'A'; $i < $_M; $i++, $col++){
-        if($i == $_M/2)
+    for($i = 0, $col = 'A'; $i < COL; $i++, $col++){
+        if($i == COL/2)
             $string .= '<th class="seat-grid-middle"></th>';
         $string .= "<th>$col</th>";
     }
@@ -52,75 +48,49 @@ function printSeatsGrid(){
 
     echo $string;
 
-    /*if(!isset($_SESSION['user'])){
+    $_seatsMap = getSeatMap();
 
-        for($i = 0; $i < $_N; $i++){
-            $string =   '<tr>
-                            <th class="seat-grid-col">' .($i+1) .'</th>';
-            for($j = 0, $col='A'; $j < $_M; $j++, $col++){
-                if($j == $_M/2)
-                    $string .= '<td class="seat-grid-middle"></td>';
+    $disabled = !isset($_SESSION['user']);
+    for($i = 0; $i < ROW; $i++) {
+        $string = '<tr>
+                        <th class="seat-grid-col">' . ($i + 1) . '</th>';
+        for ($j = 0, $col = 'A'; $j < COL; $j++, $col++) {
+            if ($j == COL / 2)
+                $string .= '<td class="seat-grid-middle"></td>';
 
-                $id = "seat$col".($i+1);
+            $id = "seat_$col"."_" . ($i + 1);
+            $string .= '<td class="my-checkbox';
+            if ($j == 0)
+                $string .= ' myborder-left';
+            else if ($j == COL - 1)
+                $string .= ' myborder-right';
 
-                $string .= '<td class="my-checkbox';
-                if($j == 0)
-                    $string .= ' myborder-left';
-                else if($j == $_M-1)
-                    $string .= ' myborder-right';
-
-
-                $string .= freeSeat($id, true);
+            //Controllo se quel posto esiste nel db (Stato diverso da libero)
+            if(!isset($_seatsMap[$id])){
+                $string .= freeSeat($id, $disabled);
+                continue;
             }
-            $string .= '</tr>';
-            echo $string;
-        }
-    }else{*/
-        global $_seatsMap;
-        $_seatsMap = getSeatMap();
-
-        $disabled = !isset($_SESSION['user']);
-        for($i = 0; $i < $_N; $i++) {
-            $string = '<tr>
-                            <th class="seat-grid-col">' . ($i + 1) . '</th>';
-            for ($j = 0, $col = 'A'; $j < $_M; $j++, $col++) {
-                if ($j == $_M / 2)
-                    $string .= '<td class="seat-grid-middle"></td>';
-
-                $id = "seat$col" . ($i + 1);
-                $string .= '<td class="my-checkbox';
-                if ($j == 0)
-                    $string .= ' myborder-left';
-                else if ($j == $_M - 1)
-                    $string .= ' myborder-right';
-
-                //Controllo se quel posto esiste nel db (Stato diverso da libero)
-                if(!isset($_seatsMap[$id])){
+            //Prendo lo stato e in base a quello visualizzo lo stile corretto del posto
+            $state = $_seatsMap[$id]->{"getState"}();
+            switch ($state){
+                case "bought":
+                    $string .= boughtSeat($id);
+                    break;
+                case "preordered":
+                    if(isset($_SESSION['user']) &&
+                        $_seatsMap[$id]->{"getUserEmail"}() === $_SESSION['user']->{"getEmail"}())
+                        $string .= mySeat($id);
+                    else
+                        $string .= preorderedSeat($id, $disabled);
+                    break;
+                default:
                     $string .= freeSeat($id, $disabled);
-                    continue;
-                }
-                //Prendo lo stato e in base a quello visualizzo lo stile corretto del posto
-                $state = $_seatsMap[$id]->{"getState"}();
-                switch ($state){
-                    case "bought":
-                        $string .= boughtSeat($id);
-                        break;
-                    case "preordered":
-                        if(isset($_SESSION['user']) &&
-                            $_seatsMap[$id]->{"getUserEmail"}() === $_SESSION['user']->{"getEmail"}())
-                            $string .= mySeat($id);
-                        else
-                            $string .= preorderedSeat($id, $disabled);
-                        break;
-                    default:
-                        $string .= freeSeat($id, $disabled);
-                        break;
-                }
+                    break;
             }
-            $string .= '</tr>';
-            echo $string;
         }
-    //}
+        $string .= '</tr>';
+        echo $string;
+    }
 }
 
 function getSeatMap(): array{
@@ -147,11 +117,29 @@ function getSeatMap(): array{
     return $seatsMap;
 }
 
-function unavailableSeat(string $id): string {
+function validateId(string $id){
+
+    $results = preg_split("/_/", $id);
+    if(sizeof($results) != 3)
+        return false;
+
+    $col = $results[1];
+    $row = $results[2];
+
+    $col -= 'A';
+    if($col >= COL || $col < 0 )
+        return false;
+    if($row >= ROW || $row < 0)
+        return false;
+
+    return true;
+}
+
+/*function unavailableSeat(string $id): string {
     return '" disabled state="unavailable"><input type="checkbox" disabled id="'.$id.'" autocomplete="off"/>
                               <label for="'.$id.'"></label>
                             </td>';
-}
+}*/
 
 function freeSeat(string $id, bool $disabled): string {
     if($disabled){
@@ -188,7 +176,7 @@ function preorderedSeat(string $id, bool $disabled): string {
 }
 
 function calcSeatsNumberPerState(){
-    global $_seatsMap, $_numberOfSeatsPerState, $_M, $_N;
+    global $_seatsMap, $_numberOfSeatsPerState;
     if(!isset($_seatsMap))
         throw new LogicException("You must call printSeatsGrid() before");
     if(isset($_numberOfSeatsPerState))
@@ -204,8 +192,21 @@ function calcSeatsNumberPerState(){
             $preordered++;
     }
 
-    $free = $_M*$_N - sizeof($_seatsMap);
+    $total = COL*ROW;
+    $free = $total - sizeof($_seatsMap);
     $_numberOfSeatsPerState['free'] = $free;
     $_numberOfSeatsPerState['bought'] = $bought;
     $_numberOfSeatsPerState['preordered'] = $preordered;
+
+    //INSERISCO 2% come minima percentuale per non azzerare completamente la progress bar e far vedere il numero
+    //Per questioni di grafica
+    if($total != 0){
+        $_numberOfSeatsPerState['free%'] = $free/$total == 0 ? 2 : $free/$total*100;
+        $_numberOfSeatsPerState['bought%'] = $bought/$total == 0 ? 2 : $bought/$total*100;
+        $_numberOfSeatsPerState['preordered%'] = $preordered/$total == 0 ? 2 : $preordered/$total*100;
+    }else{
+        $_numberOfSeatsPerState['free%'] = 2;
+        $_numberOfSeatsPerState['bought%'] = 2;
+        $_numberOfSeatsPerState['preordered%'] = 2;
+    }
 }

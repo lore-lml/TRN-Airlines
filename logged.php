@@ -114,13 +114,15 @@ include_once "php/user.php";?>
                 <i class="fas fa-plane-departure" id="seat-summary"></i>
                 <h4>Riepilogo posti</h4>
                 <div class="summary">
-                    <p><strong>Posti Totali: <?php global $_M, $_N;
-                            echo $_M*$_N;?>
+                    <p><strong>Posti Totali: <?php echo COL*ROW;?>
                         </strong></p>
                     <div class="summary-item">
                         <p>Posti acquistati: </p>
                         <div class="progress">
-                            <div class="progress-bar bg-red" role="progressbar" style="width: 1.5%;" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar bg-red" role="progressbar" <?php global $_numberOfSeatsPerState;
+                                calcSeatsNumberPerState();
+                                $boughtPerc = $_numberOfSeatsPerState['bought%'];
+                                echo "style='width: $boughtPerc%;' aria-valuenow='$boughtPerc'"?> aria-valuemin="0" aria-valuemax="100">
                                 <?php global $_numberOfSeatsPerState;
                                 calcSeatsNumberPerState();
                                 echo $_numberOfSeatsPerState['bought'];?>
@@ -130,7 +132,10 @@ include_once "php/user.php";?>
                     <div class="summary-item">
                         <p>Posti prenotati: </p>
                         <div class="progress">
-                            <div class="progress-bar bg-orange" role="progressbar" style="width: 1.5%;" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar bg-orange" role="progressbar" <?php global $_numberOfSeatsPerState;
+                                calcSeatsNumberPerState();
+                                $preorderedPerc = $_numberOfSeatsPerState['preordered%'];
+                                echo "style='width: $preorderedPerc%;' aria-valuenow='$preorderedPerc'"?> aria-valuemin="0" aria-valuemax="100">
                                 <?php global $_numberOfSeatsPerState;
                                 calcSeatsNumberPerState();
                                 echo $_numberOfSeatsPerState['preordered'];?>
@@ -140,7 +145,10 @@ include_once "php/user.php";?>
                     <div class="summary-item">
                         <p>Posti liberi:</p>
                         <div class="progress">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar bg-success" role="progressbar" <?php global $_numberOfSeatsPerState;
+                                calcSeatsNumberPerState();
+                                $freePerc = $_numberOfSeatsPerState['free%'];
+                                echo "style='width: $freePerc%;' aria-valuenow='$freePerc'"?> aria-valuemin="0" aria-valuemax="100">
                                 <?php global $_numberOfSeatsPerState;
                                 calcSeatsNumberPerState();
                                 echo $_numberOfSeatsPerState['free'];?>
