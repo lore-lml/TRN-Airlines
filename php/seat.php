@@ -29,11 +29,4 @@ class seat
     {
         return $this->user_email;
     }
-
-    function __destruct()
-    {
-        unset($this->id);
-        unset($this->state);
-    }
-
 }

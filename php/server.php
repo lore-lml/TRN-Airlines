@@ -10,6 +10,7 @@ define('db', 'trnairlines');
 global $_M;
 global $_N;
 global $_seatsMap;
+global $_numberOfSeatsPerState;
 
 function redirectHTTPSifNeeded(){
     if(!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on")
@@ -51,7 +52,7 @@ function printSeatsGrid(){
 
     echo $string;
 
-    if(!isset($_SESSION['user'])){
+    /*if(!isset($_SESSION['user'])){
 
         for($i = 0; $i < $_N; $i++){
             $string =   '<tr>
@@ -69,15 +70,16 @@ function printSeatsGrid(){
                     $string .= ' myborder-right';
 
 
-                $string .= unavailableSeat($id);
+                $string .= freeSeat($id, true);
             }
             $string .= '</tr>';
             echo $string;
         }
-    }else{
+    }else{*/
         global $_seatsMap;
-
         $_seatsMap = getSeatMap();
+
+        $disabled = !isset($_SESSION['user']);
         for($i = 0; $i < $_N; $i++) {
             $string = '<tr>
                             <th class="seat-grid-col">' . ($i + 1) . '</th>';
@@ -94,7 +96,7 @@ function printSeatsGrid(){
 
                 //Controllo se quel posto esiste nel db (Stato diverso da libero)
                 if(!isset($_seatsMap[$id])){
-                    $string .= freeSeat($id);
+                    $string .= freeSeat($id, $disabled);
                     continue;
                 }
                 //Prendo lo stato e in base a quello visualizzo lo stile corretto del posto
@@ -104,17 +106,21 @@ function printSeatsGrid(){
                         $string .= boughtSeat($id);
                         break;
                     case "preordered":
-                        $string .= preorderedSeat($id);
+                        if(isset($_SESSION['user']) &&
+                            $_seatsMap[$id]->{"getUserEmail"}() === $_SESSION['user']->{"getEmail"}())
+                            $string .= mySeat($id);
+                        else
+                            $string .= preorderedSeat($id, $disabled);
                         break;
                     default:
-                        $string .= freeSeat($id);
+                        $string .= freeSeat($id, $disabled);
                         break;
                 }
             }
             $string .= '</tr>';
             echo $string;
         }
-    }
+    //}
 }
 
 function getSeatMap(): array{
@@ -132,8 +138,8 @@ function getSeatMap(): array{
     if (mysqli_num_rows($result) > 0) {
         // output data of each row
         while($row = mysqli_fetch_assoc($result)) {
-            $seat = new seat($row[0], $row[1], $row[2]);
-            $seatMap[$row[0]] = $seat;
+            $seat = new seat($row['seat_id'], $row['state'], $row['user_email']);
+            $seatsMap[$row['seat_id']] = $seat;
         }
     }
 
@@ -147,7 +153,12 @@ function unavailableSeat(string $id): string {
                             </td>';
 }
 
-function freeSeat(string $id): string {
+function freeSeat(string $id, bool $disabled): string {
+    if($disabled){
+        return '"><input type="checkbox" id="'.$id.'" disabled autocomplete="off"/>
+                              <label for="'.$id.'"></label>
+                            </td>';
+    }
     return '"><input type="checkbox" id="'.$id.'" autocomplete="off"/>
                               <label for="'.$id.'"></label>
                             </td>';
@@ -165,8 +176,36 @@ function boughtSeat(string $id): string {
                             </td>';
 }
 
-function preorderedSeat(string $id): string {
-    return '" disabled state="preordered"><input type="checkbox" disabled id="'.$id.'" autocomplete="off"/>
+function preorderedSeat(string $id, bool $disabled): string {
+    if($disabled)
+        return '" state="preordered"><input type="checkbox" id="'.$id.'" disabled autocomplete="off"/>
                               <label for="'.$id.'"></label>
                             </td>';
+
+    return '" state="preordered"><input type="checkbox" id="'.$id.'" autocomplete="off"/>
+                              <label for="'.$id.'"></label>
+                            </td>';
+}
+
+function calcSeatsNumberPerState(){
+    global $_seatsMap, $_numberOfSeatsPerState, $_M, $_N;
+    if(!isset($_seatsMap))
+        throw new LogicException("You must call printSeatsGrid() before");
+    if(isset($_numberOfSeatsPerState))
+        return;
+    $bought = 0;
+    $preordered = 0;
+    foreach($_seatsMap as $key => $value){
+        $state = $value->{"getState"}();
+
+        if($state === "bought")
+            $bought++;
+        else if($state === "preordered")
+            $preordered++;
+    }
+
+    $free = $_M*$_N - sizeof($_seatsMap);
+    $_numberOfSeatsPerState['free'] = $free;
+    $_numberOfSeatsPerState['bought'] = $bought;
+    $_numberOfSeatsPerState['preordered'] = $preordered;
 }

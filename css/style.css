@@ -190,9 +190,10 @@ table.seat-grid{
 .my-checkbox label{
     background: url(../icons/free_seat.png) no-repeat center;
     background-size: cover;
-    width: 50px;
-    height: 50px;
+    width: 53px;
+    height: 53px;
     transition: .2s;
+    margin: 0;
 }
 .my-checkbox label:hover{
     background: #e2e2e2 url(../icons/free_seat.png) no-repeat center;
@@ -201,8 +202,8 @@ table.seat-grid{
 .my-checkbox :checked+label{
     background: url(../icons/my_seat.png) no-repeat center;
     background-size: cover;
-    width: 45px;
-    height: 45px;
+    width: 50px;
+    height: 50px;
 }
 .my-checkbox :checked+label:hover{
     background: #e2e2e2 url(../icons/my_seat.png) no-repeat center;
@@ -210,8 +211,8 @@ table.seat-grid{
 }
 
 .my-checkbox[disabled] label{
-    width: 45px;
-    height: 45px;
+    width: 50px;
+    height: 50px;
 }
 
 .my-checkbox[disabled][state="unavailable"] label{
@@ -234,12 +235,26 @@ table.seat-grid{
     background-size: cover;
 }
 
-.my-checkbox[disabled][state="preordered"] label{
+.my-checkbox[state="preordered"] label{
     background: url(../icons/preordered_seat.png) no-repeat center;
+    background-size: cover;
+    width: 53px;
+    height: 53px;
+}
+
+.my-checkbox[state="preordered"] :checked+label{
+    background: url(../icons/my_seat.png) no-repeat center;
+    background-size: cover;
+    width: 50px;
+    height: 50px;
+}
+
+.my-checkbox[state="preordered"] :checked+label:hover{
+    background: #e2e2e2 url(../icons/my_seat.png) no-repeat center;
     background-size: cover;
 }
 
-.my-checkbox[disabled][state="preordered"] label:hover{
+.my-checkbox[state="preordered"] label:hover{
     background: #e2e2e2 url(../icons/preordered_seat.png) no-repeat center;
     background-size: cover;
 }
@@ -271,7 +286,7 @@ table.seat-grid tr{
 .legend{
   margin-top: 15%;
 }
-.lenged-item img, p{
+.legend-item img, p{
   display: inline;
 
 }
@@ -281,7 +296,7 @@ table.seat-grid tr{
 
 .body-right{
   text-align: center;
-  padding: 50px;
+  padding: 0 70px;
 }
 
 .logged{

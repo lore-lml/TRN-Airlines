@@ -114,23 +114,37 @@ include_once "php/user.php";?>
                 <i class="fas fa-plane-departure" id="seat-summary"></i>
                 <h4>Riepilogo posti</h4>
                 <div class="summary">
-                    <p><strong>Posti Totali: 30</strong></p>
+                    <p><strong>Posti Totali: <?php global $_M, $_N;
+                            echo $_M*$_N;?>
+                        </strong></p>
                     <div class="summary-item">
                         <p>Posti acquistati: </p>
                         <div class="progress">
-                            <div class="progress-bar bg-red" role="progressbar" style="width: 33%;" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100">10</div>
+                            <div class="progress-bar bg-red" role="progressbar" style="width: 1.5%;" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100">
+                                <?php global $_numberOfSeatsPerState;
+                                calcSeatsNumberPerState();
+                                echo $_numberOfSeatsPerState['bought'];?>
+                            </div>
                         </div>
                     </div>
                     <div class="summary-item">
                         <p>Posti prenotati: </p>
                         <div class="progress">
-                            <div class="progress-bar bg-orange" role="progressbar" style="width: 17%;" aria-valuenow="17" aria-valuemin="0" aria-valuemax="100">5</div>
+                            <div class="progress-bar bg-orange" role="progressbar" style="width: 1.5%;" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100">
+                                <?php global $_numberOfSeatsPerState;
+                                calcSeatsNumberPerState();
+                                echo $_numberOfSeatsPerState['preordered'];?>
+                            </div>
                         </div>
                     </div>
                     <div class="summary-item">
                         <p>Posti liberi:</p>
                         <div class="progress">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">15</div>
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                                <?php global $_numberOfSeatsPerState;
+                                calcSeatsNumberPerState();
+                                echo $_numberOfSeatsPerState['free'];?>
+                            </div>
                         </div>
                     </div>
                 </div>

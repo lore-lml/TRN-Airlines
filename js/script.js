@@ -38,6 +38,13 @@ $(document).ready(function () {
 
     $('#logout-btn').click(logout)
 
+    $('.my-checkbox input[type="checkbox"]').change(function () {
+        if ($(this).is(":checked")){
+            doPreorderSeat($(this));
+        }else{
+            doCancelSeat($(this))
+        }
+    });
 });
 
 function registerUser(){
@@ -239,6 +246,49 @@ function logout() {
             location.reload();
         })
         .fail(function () {
+            alert("Qualcosa è andato storto");
+        });
+}
 
+function doPreorderSeat(checkbox){
+    console.log(checkbox.attr("id"));
+
+    $.post("php/ajax_request.php",
+        {
+            method: "preorderSeat",
+            id: checkbox.attr("id")
+        })
+        .done(function (data){
+            data = JSON.parse(data);
+            let res = data["result"];
+
+            if(res) return;
+
+            alert("Qualcosa è andato storto");
+        })
+        .fail(function () {
+            alert("Qualcosa è andato storto");
+        });
+}
+
+function doCancelSeat(checkbox){
+    $.post("php/ajax_request.php",
+        {
+            method: "cancelSeat",
+            id: checkbox.attr("id")
+        })
+        .done(function (data){
+            data = JSON.parse(data);
+            let res = data["result"];
+
+            if(res){
+                checkbox.parent().removeAttr("state");
+                return;
+            }
+
+            alert("Qualcosa è andato storto");
+        })
+        .fail(function () {
+            alert("Qualcosa è andato storto");
         });
 }
