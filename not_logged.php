@@ -87,7 +87,7 @@
                     </div>
                     <div class="legend-item">
                         <img src="icons/my_seat.png" alt="" width="50" height="50">
-                        <p>I tuoi posti</p>
+                        <p>Il tuo posto</p>
                     </div>
                     <div class="legend-item">
                         <img src="icons/bought_seat.png" alt="" width="50" height="50">

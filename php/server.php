@@ -123,10 +123,10 @@ function validateId(string $id){
     if(sizeof($results) != 3)
         return false;
 
-    $col = $results[1];
+    $col = ord($results[1]);
     $row = $results[2];
 
-    $col -= 'A';
+    $col -= ord('A');
     if($col >= COL || $col < 0 )
         return false;
     if($row >= ROW || $row < 0)

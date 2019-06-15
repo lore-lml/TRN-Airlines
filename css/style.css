@@ -53,9 +53,12 @@ a:focus {
     margin: 40px 0;
 }
 
-i,
-span {
+i, span {
     display: inline-block;
+}
+
+#error-field{
+    color: red;
 }
 
 /* ---------------------------------------------------
@@ -322,7 +325,7 @@ table.seat-grid tr{
   color: #007bff;
 }
 
-#btn-prenota{
+#btn-compra {
   margin-top: 40px;
 }
 

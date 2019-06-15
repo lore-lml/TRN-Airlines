@@ -49,7 +49,7 @@ include_once "php/user.php";?>
                 </a>
             </li>
             <li>
-                <a href="#" class="btn-action">
+                <a href="" class="btn-action" id="btn-cancelPreorderedSeats">
                     <i class="fas fa-trash-alt"></i>
                     Cancella Prenotazioni
                 </a>
@@ -76,6 +76,7 @@ include_once "php/user.php";?>
                               </li>
                           </ul>
                           -->
+                <h5 id="error-field"></h5>
             </div>
         </nav>
 
@@ -100,14 +101,14 @@ include_once "php/user.php";?>
                     </div>
                     <div class="legend-item">
                         <img src="icons/my_seat.png" alt="" width="50" height="50">
-                        <p>I tuoi posti</p>
+                        <p>Il tuo posto</p>
                     </div>
                     <div class="legend-item">
                         <img src="icons/bought_seat.png" alt="" width="50" height="50">
                         <p>Posto acquistato</p>
                     </div>
                 </div>
-                <button type="button" class="btn btn-outline-primary btn-block" id="btn-prenota">Acquista</button>
+                <button type="button" class="btn btn-outline-primary btn-block" id="btn-compra">Acquista</button>
             </div>
 
             <div class="body-right logged">

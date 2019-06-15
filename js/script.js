@@ -1,3 +1,4 @@
+const AJAXURL = "php/ajax_request.php";
 $(document).ready(function () {
     $('#sidebarCollapse').click(function () {
         let sidebar = $('#sidebar');
@@ -36,15 +37,19 @@ $(document).ready(function () {
 
     $('#loginBtn').click(login);
 
-    $('#logout-btn').click(logout)
+    $('#logout-btn').click(logout);
 
     $('.my-checkbox input[type="checkbox"]').change(function () {
         if ($(this).is(":checked")){
             doPreorderSeat($(this));
         }else{
-            doCancelSeat($(this))
+            doCancelSeat($(this));
         }
     });
+
+    $('#btn-cancelPreorderedSeats').click(cancelPreorderedSeats);
+
+    $('#btn-compra').click(buySeats);
 });
 
 function registerUser(){
@@ -96,7 +101,7 @@ function registerUser(){
 
 function doRegisterRequest(name, email, psw1, psw2){
 
-    $.post("php/ajax_request.php", getRegisterJSON("registerUser", name, email, psw1, psw2))
+    $.post(AJAXURL, getRegisterJSON("registerUser", name, email, psw1, psw2))
         .done(function (data) {
             data = JSON.parse(data);
             let res = data["result"];
@@ -203,7 +208,7 @@ function login(){
 }
 
 function doLoginRequest(email, psw) {
-    $.post("php/ajax_request.php",
+    $.post(AJAXURL,
         {
             method: "login",
             email: email,
@@ -241,7 +246,7 @@ function doLoginRequest(email, psw) {
 }
 
 function logout() {
-    $.post("php/ajax_request.php", {method: "logout"})
+    $.post(AJAXURL, {method: "logout"})
         .done(function (){
             location.reload();
         })
@@ -253,7 +258,7 @@ function logout() {
 function doPreorderSeat(checkbox){
     console.log(checkbox.attr("id"));
 
-    $.post("php/ajax_request.php",
+    $.post(AJAXURL,
         {
             method: "preorderSeat",
             id: checkbox.attr("id")
@@ -272,7 +277,7 @@ function doPreorderSeat(checkbox){
 }
 
 function doCancelSeat(checkbox){
-    $.post("php/ajax_request.php",
+    $.post(AJAXURL,
         {
             method: "cancelSeat",
             id: checkbox.attr("id")
@@ -286,7 +291,73 @@ function doCancelSeat(checkbox){
                 return;
             }
 
+            let cause = data['cause'];
+            alert("Qualcosa è andato storto: " + cause);
+        })
+        .fail(function () {
             alert("Qualcosa è andato storto");
+        });
+}
+
+function cancelPreorderedSeats(){
+    $.post(AJAXURL, {method: "cancelPreorderedSeats"})
+        .done(function (data){
+            data = JSON.parse(data);
+            let res = data["result"];
+
+            if(res){
+                location.reload();
+                return;
+            }
+            let cause = data['cause'];
+            alert("Qualcosa è andato storto: " + cause);
+        })
+        .fail(function () {
+            alert("Qualcosa è andato storto");
+        });
+
+    return false;
+}
+
+function buySeats() {
+    let ids = [];
+    let next = 0;
+    let checkboxes = $('.my-checkbox');
+
+    checkboxes.each(function () {
+       let box = $(this).children("input");
+       if(box.is(":checked"))
+           ids[next++] = box.attr("id");
+    });
+
+    console.log(ids);
+
+    $.post(AJAXURL,
+        {
+            method: "buySeats",
+            ids: ids
+        })
+        .done(function (data) {
+            data = JSON.parse(data);
+            let res = data["result"];
+
+            if(res){
+                location.reload();
+                return;
+            }
+            let cause = data['cause'];
+            switch (cause) {
+                case "invalid_email":
+                    $('#error-field').text("Il tuo account non è stato trovato nel database");
+                    break;
+                case "ids_mismatch":
+                    $('#error-field').text("Uno dei tuoi posti è stato acquistato da qualcun altro");
+                    break;
+
+                default:
+                    alert("Qualcosa è andato storto: " + cause);
+                    break;
+            }
         })
         .fail(function () {
             alert("Qualcosa è andato storto");
