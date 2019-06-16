@@ -216,7 +216,7 @@ function preorderSeat(){
             //$err = mysqli_stmt_error($stmt);
             mysqli_stmt_close($stmt);
 
-            $sql = "SELECT * FROM seats WHERE seat_id = ?  AND state <> 'bought' LIMIT 1 FOR UPDATE";
+            $sql = "SELECT state FROM seats WHERE seat_id = ? LIMIT 1 FOR UPDATE";
             $stmt1 = mysqli_prepare($conn, $sql);
             mysqli_stmt_bind_param($stmt1, "s", $id);
 
@@ -225,7 +225,14 @@ function preorderSeat(){
                 $result['cause'] = "db_error";
                 throw new Exception();
             }
-            mysqli_stmt_fetch($stmt1);
+            $res = mysqli_stmt_get_result($stmt);
+            $row = mysqli_fetch_row($res);
+            //SE SIAMO QUI DENTRO ALLORA IL POSTO E' PREORDINATO O COMPRATO
+            //SE IL POSTO E' COMPRATO LANCIA ECCEZIONE
+            if(isset($row['state']) && $row['state'] === 'bought'){
+                $result['cause']="already_bought";
+                throw new Exception();
+            }
             mysqli_stmt_close($stmt1);
 
             $sql = "UPDATE seats SET user_email = ?, state='preordered' WHERE seat_id = ?";
@@ -316,9 +323,10 @@ function cancelSeat(){
     return json_encode($result);
 }
 
-function cancelPreorderedSeats(){
+function cancelPreorderedSeats(bool $sessionStart = true){
     global $result;
-    session_start();
+    if($sessionStart)
+        session_start();
 
     $conn = connectDb();
 
@@ -408,44 +416,44 @@ function buySeats(){
         unset($id);
 
         mysqli_autocommit($conn, false);
-        //CONTROLLO SE GLI ID PASSATI SONO UGUALI A QUELLI NEL DB E BLOCCO TALI RIGHE
-        $sql = "SELECT seat_id FROM seats WHERE state = 'preordered' FOR UPDATE";
+        //CERCO TUTTI I BIGLIETTI COMPRATI E CONTROLLO CHE I LORO ID NON SIANO PRESENTI IN QUELLI PASSATI
+        $sql = "SELECT seat_id FROM seats WHERE user_email <> ? FOR UPDATE";
         $stmt = mysqli_prepare($conn, $sql);
-
+        mysqli_stmt_bind_param($stmt, "s", $email);
         if(!mysqli_stmt_execute($stmt)){
             $result['cause'] = "db_error";
             throw new Exception();
         }
 
         $res = mysqli_stmt_get_result($stmt);
-        $cnt = 0;
-        $selected = array();
+
+        //CONTROLLO CHE I POSTI INSERITI NON SiANO GIA' STATI COMPRATI
         while($row = mysqli_fetch_row($res)){
-            $selected[$cnt++] = $row[0];
+            if(in_array($row[0], $ids, true)){
+                $result['cause'] = "not_your_seat";
+                throw new Exception();
+            }
         }
 
-        for($cnt = 0, $i = 0; $i < sizeof($ids); $i++){
-            if(in_array($ids[$cnt], $selected, true))
-                $cnt++;
-        }
-
-        if($cnt != sizeof($ids)){
-            $result['cause'] = "ids_mismatch";
+        $queries = buildQueriesForBuying($ids,$email);
+        if(!$queries){
+            $result['cause'] = "no_ids_sent";
             throw new Exception();
         }
+        foreach ($queries as $sql){
+            $stmt = mysqli_prepare($conn,$sql);
 
-        $sql = buildBuySeatsQuery($ids,$email);
-        $stmt = mysqli_prepare($conn,$sql);
+            if(!mysqli_stmt_execute($stmt)){
+                $result['cause'] = "db_error";
+                throw new Exception();
+            }
 
-        if(!mysqli_stmt_execute($stmt)){
-            $result['cause'] = "db_error";
-            throw new Exception();
+            if(mysqli_stmt_affected_rows($stmt) <= 0){
+                $result['cause'] = "update_error";
+                throw new Exception();
+            }
         }
 
-        if(mysqli_stmt_affected_rows($stmt) != sizeof($ids)){
-            $result['cause'] = "update_error";
-            throw new Exception();
-        }
 
         $result['result'] = true;
     }catch (mysqli_sql_exception $e){
@@ -454,9 +462,17 @@ function buySeats(){
         mysqli_autocommit($conn, true);
     }catch (Exception $e){
         $result['result'] = false;
+        mysqli_rollback($conn);
+        mysqli_autocommit($conn, true);
+
         if($result['cause'] !== "session_expired") {
-            mysqli_rollback($conn);
-            mysqli_autocommit($conn, true);
+            if($result['cause'] === "not_your_seat"){
+                cancelPreorderedSeats(false);
+                unset($result);
+                $result['result'] = false;
+                $result['cause'] = "not_your_seat";
+                $result['redirect'] = "index.php?msg=".$result['cause'];
+            }
         }
     }
 
@@ -464,7 +480,20 @@ function buySeats(){
     mysqli_close($conn);
     return json_encode($result);
 }
+function buildQueriesForBuying(array $ids, string $email): array {
+    $cnt = sizeof($ids);
+    if($cnt <= 0 ) return false;
 
+    $cnt = 0;
+    $queries = array();
+    foreach ($ids as $id){
+        $sql = "INSERT INTO seats(seat_id, state, user_email) VALUES('$id','bought','$email') "
+            ."ON DUPLICATE KEY UPDATE state='bought', user_email = '$email'";
+        $queries[$cnt++] = $sql;
+    }
+
+    return $queries;
+}
 function buildBuySeatsQuery(array $ids, string $email){
     $cnt = sizeof($ids);
     if($cnt <= 0 ) return false;

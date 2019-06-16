@@ -23,6 +23,11 @@ function redirectHTTPSifNeeded(){
     }
 };
 
+function redirect(string $resource, string $msg){
+    //header("Location: https://" . $_SERVER["HTTP_HOST"] ."/TRN-Airlines/". "$resource?msg=$msg");
+    header("Location: https://localhost/TRN-Airlines/index.php?msg=not_your_seat");
+}
+
 function initPage(){
     session_start();
     return isset($_SESSION['user']);

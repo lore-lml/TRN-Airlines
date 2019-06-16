@@ -268,8 +268,16 @@ function doPreorderSeat(checkbox){
             let res = data["result"];
 
             if(res) return;
-
-            alert("Qualcosa è andato storto");
+            let cause = res['cause'];
+            if(cause === "already_bought"){
+                $("#error-field").text("Il posto è già stato comprato e non e' possibile prenotarlo!");
+                checkbox.prop("disabled", true);
+                let parent = checkbox.parent();
+                parent.prop("disabled", true);
+                parent.attr("state", "bought");
+            }
+            else
+                alert("Qualcosa è andato storto");
         })
         .fail(function () {
             alert("Qualcosa è andato storto");
@@ -350,8 +358,8 @@ function buySeats() {
                 case "invalid_email":
                     $('#error-field').text("Il tuo account non è stato trovato nel database");
                     break;
-                case "ids_mismatch":
-                    $('#error-field').text("Uno dei tuoi posti è stato acquistato da qualcun altro");
+                case "not_your_seat":
+                    window.location.href = data['redirect'];
                     break;
 
                 default:
