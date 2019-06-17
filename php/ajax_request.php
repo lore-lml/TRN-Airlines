@@ -53,9 +53,9 @@ function registerUser(){
             throw new Exception();
         }
 
-        session_start();
+
         $user = new user($email, $name);
-        $_SESSION['user'] = $user;
+        saveUserSession($user);
         $result['result'] = true;
     }catch (Exception $e){
         $result['result'] = false;
@@ -104,9 +104,8 @@ function login(){
         }
         mysqli_stmt_close($stmt);
 
-        session_start();
         $user = new user($email, $name);
-        $_SESSION['user'] = $user;
+        saveUserSession($user);
         $result['result'] = true;
     }catch (Exception $e){
         $result['result'] = false;
@@ -136,18 +135,8 @@ function validatePassword(string $psw): bool{
 
 function logout(){
     global $result;
-    session_start();
-    $_SESSION = array();
 
-    if (ini_get("session.use_cookies")) {
-        $params = session_get_cookie_params();
-        setcookie(session_name(), '', time() - 42000,
-            $params["path"], $params["domain"],
-            $params["secure"], $params["httponly"]
-        );
-    }
-
-    session_destroy();
+    destroyUserSession();
     $result["result"] = true;
     return json_encode($result);
 }
@@ -175,7 +164,6 @@ function userExist($link, $email) : bool{
 
 function preorderSeat(){
     global $result;
-    session_start();
 
     $conn = connectDb();
 
@@ -185,7 +173,7 @@ function preorderSeat(){
     }
 
     try{
-        if(!isset($_SESSION['user'])){
+        if(!checkInactivity(false)){
             $result['cause'] = "session_expired";
             throw new Exception();
         }
@@ -259,6 +247,8 @@ function preorderSeat(){
         if($result['cause'] !== "session_expired") {
             mysqli_rollback($conn);
             mysqli_autocommit($conn, true);
+        }else{
+            $result['redirect'] = "index.php?msg=".$result['cause'];
         }
     }
     mysqli_autocommit($conn, true);
@@ -268,7 +258,6 @@ function preorderSeat(){
 
 function cancelSeat(){
     global $result;
-    session_start();
 
     $conn = connectDb();
 
@@ -278,7 +267,7 @@ function cancelSeat(){
     }
 
     try{
-        if(!isset($_SESSION['user'])){
+        if(!checkInactivity(false)){
             $result['cause'] = "session_expired";
             throw new Exception();
         }
@@ -317,6 +306,9 @@ function cancelSeat(){
         mysqli_autocommit($conn, true);
     }catch (Exception $e){
         $result['result'] = false;
+        if($result['cause'] === "session_expired"){
+            $result['redirect'] = "index.php?msg=".$result['cause'];
+        }
     }
 
     mysqli_close($conn);
@@ -325,8 +317,6 @@ function cancelSeat(){
 
 function cancelPreorderedSeats(bool $sessionStart = true){
     global $result;
-    if($sessionStart)
-        session_start();
 
     $conn = connectDb();
 
@@ -336,7 +326,7 @@ function cancelPreorderedSeats(bool $sessionStart = true){
     }
 
     try{
-        if(!isset($_SESSION['user'])){
+        if($sessionStart && !checkInactivity(false)){
             $result['cause'] = "session_expired";
             throw new Exception();
         }
@@ -369,6 +359,8 @@ function cancelPreorderedSeats(bool $sessionStart = true){
         if($result['cause'] !== "session_expired") {
             mysqli_rollback($conn);
             mysqli_autocommit($conn, true);
+        }else{
+            $result['redirect'] = "index.php?msg=".$result['cause'];
         }
     }
 
@@ -378,7 +370,6 @@ function cancelPreorderedSeats(bool $sessionStart = true){
 
 function buySeats(){
     global $result;
-    session_start();
 
     $conn = connectDb();
 
@@ -388,7 +379,7 @@ function buySeats(){
     }
 
     try{
-        if(!isset($_SESSION['user'])){
+        if(!checkInactivity(false)){
             $result['cause'] = "session_expired";
             throw new Exception();
         }
@@ -473,6 +464,8 @@ function buySeats(){
                 $result['cause'] = "not_your_seat";
                 $result['redirect'] = "index.php?msg=".$result['cause'];
             }
+        }else{
+            $result['redirect'] = "index.php?msg=".$result['cause'];
         }
     }
 

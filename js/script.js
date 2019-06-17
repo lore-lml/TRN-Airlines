@@ -1,4 +1,5 @@
 const AJAXURL = "php/ajax_request.php";
+const INDEX = "index.php"
 $(document).ready(function () {
     $('#sidebarCollapse').click(function () {
         let sidebar = $('#sidebar');
@@ -106,7 +107,8 @@ function doRegisterRequest(name, email, psw1, psw2){
             data = JSON.parse(data);
             let res = data["result"];
             if(res) {
-                location.reload();
+                window.location.href = INDEX;
+                //location.reload();
                 return;
             }
             let cause = data["cause"];
@@ -218,7 +220,8 @@ function doLoginRequest(email, psw) {
             data = JSON.parse(data);
             let res = data["result"];
             if(res) {
-                location.reload();
+                window.location.href = INDEX;
+                //location.reload();
                 return;
             }
             let cause = data["cause"];
@@ -248,7 +251,8 @@ function doLoginRequest(email, psw) {
 function logout() {
     $.post(AJAXURL, {method: "logout"})
         .done(function (){
-            location.reload();
+            window.location.href = INDEX;
+            //location.reload();
         })
         .fail(function () {
             alert("Qualcosa è andato storto");
@@ -269,15 +273,22 @@ function doPreorderSeat(checkbox){
 
             if(res) return;
             let cause = data['cause'];
-            if(cause === "already_bought"){
-                $("#error-field").text("Il posto è già stato comprato e non e' possibile prenotarlo!");
-                checkbox.prop("disabled", true);
-                checkbox.prop("checked", false);
-                checkbox.parent().attr("disabled", "");
-                checkbox.parent().attr("state", "bought");
+            switch (cause) {
+                case "already_bought":
+                    $("#error-field").text("Il posto è già stato comprato e non e' possibile prenotarlo!");
+                    checkbox.prop("disabled", true);
+                    checkbox.prop("checked", false);
+                    checkbox.parent().attr("disabled", "");
+                    checkbox.parent().attr("state", "bought");
+                    break;
+                case "session_expired":
+                    window.location.href = data['redirect'];
+                    break;
+                default:
+                    alert("Qualcosa è andato storto");
+                    break;
+
             }
-            else
-                alert("Qualcosa è andato storto");
         })
         .fail(function () {
             alert("Qualcosa è andato storto");
@@ -300,7 +311,14 @@ function doCancelSeat(checkbox){
             }
 
             let cause = data['cause'];
-            alert("Qualcosa è andato storto: " + cause);
+            switch (cause) {
+                case "session_expired":
+                    window.location.href = data['redirect'];
+                    break;
+                default:
+                    alert("Qualcosa è andato storto: " + cause);
+                    break;
+            }
         })
         .fail(function () {
             alert("Qualcosa è andato storto");
@@ -314,11 +332,19 @@ function cancelPreorderedSeats(){
             let res = data["result"];
 
             if(res){
-                location.reload();
+                window.location.href = INDEX;
+                //location.reload();
                 return;
             }
             let cause = data['cause'];
-            alert("Qualcosa è andato storto: " + cause);
+            switch (cause) {
+                case "session_expired":
+                    window.location.href = data['redirect'];
+                    break;
+                default:
+                    alert("Qualcosa è andato storto: " + cause);
+                    break;
+            }
         })
         .fail(function () {
             alert("Qualcosa è andato storto");
@@ -350,7 +376,8 @@ function buySeats() {
             let res = data["result"];
 
             if(res){
-                location.reload();
+                window.location.href = INDEX;
+                //location.reload();
                 return;
             }
             let cause = data['cause'];
@@ -361,7 +388,9 @@ function buySeats() {
                 case "not_your_seat":
                     window.location.href = data['redirect'];
                     break;
-
+                case "session_expired":
+                    window.location.href = data['redirect'];
+                    break;
                 default:
                     alert("Qualcosa è andato storto: " + cause);
                     break;

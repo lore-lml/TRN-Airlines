@@ -76,15 +76,7 @@ include_once "php/user.php";?>
                               </li>
                           </ul>
                           -->
-                <h5 id="error-field"><?php
-                    if(isset($_GET['msg'])){
-                        switch ($_GET['msg']) {
-                            case "not_your_seat":
-                                echo "Uno dei tuoi posti è stato prenotato o acquistato da qualcun altro";
-                                break;
-                        }
-                    }
-                    ?></h5>
+                <h5 id="error-field"><?php printError() ?></h5>
             </div>
         </nav>
 

@@ -63,6 +63,7 @@
                       </li>
                   </ul>
                 -->
+                <h5 id="error-field"><?php printError() ?></h5>
             </div>
         </nav>
 

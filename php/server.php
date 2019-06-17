@@ -6,8 +6,9 @@ define('host', 'localhost');
 define('admin', 'root');
 define('psw', '');
 define('db', 'trnairlines');
-define('COL', '6');
-define('ROW', '10');
+define('COL', 6);
+define('ROW', 10);
+define('INACTIVITY_TIME', 120);
 
 global $_seatsMap;
 global $_numberOfSeatsPerState;
@@ -24,19 +25,72 @@ function redirectHTTPSifNeeded(){
 };
 
 function redirect(string $resource, string $msg){
-    //header("Location: https://" . $_SERVER["HTTP_HOST"] ."/TRN-Airlines/". "$resource?msg=$msg");
-    header("Location: https://localhost/TRN-Airlines/index.php?msg=not_your_seat");
+    header("Location: https://" . $_SERVER["HTTP_HOST"] ."/TRN-Airlines/". "$resource?msg=$msg");
+    //header("Location: https://localhost/TRN-Airlines/index.php?msg=not_your_seat");
 }
-
-function initPage(){
-    session_start();
-    return isset($_SESSION['user']);
-};
 
 function connectDb(){
     $conn = mysqli_connect(host, admin, psw, db);
     return $conn;
 };
+
+function saveUserSession(user $user){
+    session_start();
+    $_SESSION['user'] = $user;
+    $_SESSION['time'] = time();
+}
+
+function destroyUserSession(bool $session_start = true){
+    if($session_start)
+        session_start();
+    $_SESSION = array();
+
+    if (ini_get("session.use_cookies")) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', time() - 3600*24,
+            $params["path"], $params["domain"],
+            $params["secure"], $params["httponly"]
+        );
+    }
+
+    session_destroy();
+}
+
+function checkInactivity(bool $redirect = true) : bool {
+    session_start();
+    $t=time();
+    $inactivity=0;
+    $new=false;
+
+    if (isset($_SESSION['time'])){
+        $t0=$_SESSION['time'];
+        $inactivity=($t-$t0);
+    } else
+        $new=true;
+
+    if($new || $inactivity > INACTIVITY_TIME){
+        destroyUserSession(false);
+        if(!$new && $redirect)
+            redirect("index.php", "session_expired");
+        return false;
+    }
+
+    $_SESSION['time'] = time();
+    return true;
+
+}
+
+function printError(){
+    if(isset($_GET['msg'])){
+        switch ($_GET['msg']) {
+            case "not_your_seat":
+                echo "Uno dei tuoi posti è stato prenotato o acquistato da qualcun altro";
+                break;
+            case "session_expired":
+                echo "La tua sessione è scaduta per inattività";
+        }
+    }
+}
 
 function printSeatsGrid(){
     global $_seatsMap;
