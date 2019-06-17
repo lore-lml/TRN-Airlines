@@ -268,13 +268,13 @@ function doPreorderSeat(checkbox){
             let res = data["result"];
 
             if(res) return;
-            let cause = res['cause'];
+            let cause = data['cause'];
             if(cause === "already_bought"){
                 $("#error-field").text("Il posto è già stato comprato e non e' possibile prenotarlo!");
                 checkbox.prop("disabled", true);
-                let parent = checkbox.parent();
-                parent.prop("disabled", true);
-                parent.attr("state", "bought");
+                checkbox.prop("checked", false);
+                checkbox.parent().attr("disabled", "");
+                checkbox.parent().attr("state", "bought");
             }
             else
                 alert("Qualcosa è andato storto");

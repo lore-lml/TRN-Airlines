@@ -216,7 +216,7 @@ function preorderSeat(){
             //$err = mysqli_stmt_error($stmt);
             mysqli_stmt_close($stmt);
 
-            $sql = "SELECT state FROM seats WHERE seat_id = ? LIMIT 1 FOR UPDATE";
+            $sql = "SELECT state FROM seats WHERE seat_id = ? FOR UPDATE";
             $stmt1 = mysqli_prepare($conn, $sql);
             mysqli_stmt_bind_param($stmt1, "s", $id);
 
@@ -225,11 +225,11 @@ function preorderSeat(){
                 $result['cause'] = "db_error";
                 throw new Exception();
             }
-            $res = mysqli_stmt_get_result($stmt);
+            $res = mysqli_stmt_get_result($stmt1);
             $row = mysqli_fetch_row($res);
             //SE SIAMO QUI DENTRO ALLORA IL POSTO E' PREORDINATO O COMPRATO
             //SE IL POSTO E' COMPRATO LANCIA ECCEZIONE
-            if(isset($row['state']) && $row['state'] === 'bought'){
+            if(isset($row[0]) && $row[0] === 'bought'){
                 $result['cause']="already_bought";
                 throw new Exception();
             }
