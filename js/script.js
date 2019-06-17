@@ -1,5 +1,6 @@
 const AJAXURL = "php/ajax_request.php";
-const INDEX = "index.php"
+const INDEX = "index.php";
+const COOKIE_DISABLED = "cookie_disabled.html";
 $(document).ready(function () {
     $('#sidebarCollapse').click(function () {
         let sidebar = $('#sidebar');
@@ -53,7 +54,14 @@ $(document).ready(function () {
     $('#btn-compra').click(buySeats);
 });
 
+function areCookiesEnabled() {
+    let enabled = (navigator.cookieEnabled) ? true : false;
+    if(!enabled)
+        window.location.href = COOKIE_DISABLED;
+}
+
 function registerUser(){
+    areCookiesEnabled();
     let name = $('#registerName').val();
     let email = $('#registerEmail').val();
     let psw1 = $('#registerPassword').val();
@@ -185,6 +193,7 @@ function getRegisterJSON(method, name, email, psw1, psw2){
 }
 
 function login(){
+    areCookiesEnabled();
     let email = $('#loginEmail').val();
     let psw = $('#loginPassword').val();
 
@@ -249,6 +258,7 @@ function doLoginRequest(email, psw) {
 }
 
 function logout() {
+    areCookiesEnabled();
     $.post(AJAXURL, {method: "logout"})
         .done(function (){
             window.location.href = INDEX;
@@ -260,6 +270,7 @@ function logout() {
 }
 
 function doPreorderSeat(checkbox){
+    areCookiesEnabled();
     console.log(checkbox.attr("id"));
 
     $.post(AJAXURL,
@@ -296,6 +307,7 @@ function doPreorderSeat(checkbox){
 }
 
 function doCancelSeat(checkbox){
+    areCookiesEnabled();
     $.post(AJAXURL,
         {
             method: "cancelSeat",
@@ -326,6 +338,7 @@ function doCancelSeat(checkbox){
 }
 
 function cancelPreorderedSeats(){
+    areCookiesEnabled();
     $.post(AJAXURL, {method: "cancelPreorderedSeats"})
         .done(function (data){
             data = JSON.parse(data);
@@ -354,6 +367,7 @@ function cancelPreorderedSeats(){
 }
 
 function buySeats() {
+    areCookiesEnabled();
     let ids = [];
     let next = 0;
     let checkboxes = $('.my-checkbox');

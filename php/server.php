@@ -24,9 +24,13 @@ function redirectHTTPSifNeeded(){
     }
 };
 
-function redirect(string $resource, string $msg){
-    header("Location: https://" . $_SERVER["HTTP_HOST"] ."/TRN-Airlines/". "$resource?msg=$msg");
+function redirect(string $resource, string $msg = ""){
+    if($msg !== "")
+        $msg = "?msg=$msg";
+
+    header("Location: https://" . $_SERVER["HTTP_HOST"] ."/TRN-Airlines/". "$resource$msg");
     //header("Location: https://localhost/TRN-Airlines/index.php?msg=not_your_seat");
+    exit;
 }
 
 function connectDb(){
@@ -54,6 +58,14 @@ function destroyUserSession(bool $session_start = true){
     }
 
     session_destroy();
+}
+
+function checkOrSetCookie(bool $sessionStart = true){
+    //COOKIE VALIDI PER UN' ORA
+    setcookie("user", "enabled", time() + 3600);
+    if(!isset($_COOKIE['user']))
+        redirect("cookie_disabled.html");
+
 }
 
 function checkInactivity(bool $redirect = true) : bool {
