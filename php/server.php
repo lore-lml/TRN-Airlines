@@ -24,11 +24,14 @@ function redirectHTTPSifNeeded(){
     }
 };
 
-function redirect(string $resource, string $msg = ""){
-    if($msg !== "")
-        $msg = "?msg=$msg";
+function redirect(string $resource, string $key = "msg", string $value = ""){
+    if($value === "")
+        $key = "";
+    else
+        $key ="?$key=";
 
-    header("Location: https://" . $_SERVER["HTTP_HOST"] ."/TRN-Airlines/". "$resource$msg");
+    $cwd = preg_split('/\\\|\//', getcwd());
+    header("Location: https://" . $_SERVER["HTTP_HOST"] ."/".$cwd[sizeof($cwd)-1]. "/$resource$key$value");
     //header("Location: https://localhost/TRN-Airlines/index.php?msg=not_your_seat");
     exit;
 }
@@ -60,12 +63,17 @@ function destroyUserSession(bool $session_start = true){
     session_destroy();
 }
 
-function checkOrSetCookie(bool $sessionStart = true){
-    //COOKIE VALIDI PER UN' ORA
-    setcookie("user", "enabled", time() + 3600);
-    if(!isset($_COOKIE['user']))
-        redirect("cookie_disabled.html");
-
+function checkOrSetCookie(){
+    if (isset($_GET['cookiecheck'])) {
+        if (isset($_COOKIE['testcookie'])) {
+            print "Cookies are enabled";
+        } else {
+            redirect("cookies_disabled");
+        }
+    } else {
+        setcookie("user", "enabled", time() + 3600);
+        redirect("index.php", "cookiecheck=1");
+    }
 }
 
 function checkInactivity(bool $redirect = true) : bool {

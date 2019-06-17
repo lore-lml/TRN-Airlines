@@ -54,6 +54,13 @@ include_once "php/user.php";?>
                     Cancella Prenotazioni
                 </a>
             </li>
+            <li>
+                <noscript class="no-js">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>JavaScript non è attivo:<br>Il sito non funzionerà correttamente finchè
+                        non verrà riattivato dalle impostazioni del browser</p>
+                </noscript>
+            </li>
         </ul>
     </nav>
 

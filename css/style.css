@@ -19,6 +19,27 @@ a:focus {
     text-decoration: none;
     transition: all 0.3s;
 }
+noscript.no-js{
+    display: block;
+    text-align: left;
+}
+.list-unstyled li>.no-js{
+    margin: 0 15px;
+    padding: 30px;
+    background: #181b20;
+    border-radius: 10%;
+}
+noscript.no-js p{
+    color: white;
+    font-size: 1em;
+}
+noscript.no-js i{
+    text-align: center;
+    display: block;
+    color: yellow;
+    font-size: 30px;
+    margin-bottom: 10px;
+}
 
 .bg-orange{
   background: #FF5722;

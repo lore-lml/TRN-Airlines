@@ -1,6 +1,6 @@
 const AJAXURL = "php/ajax_request.php";
 const INDEX = "index.php";
-const COOKIE_DISABLED = "cookie_disabled.html";
+const COOKIE_DISABLED = "cookies_disabled.html";
 $(document).ready(function () {
     $('#sidebarCollapse').click(function () {
         let sidebar = $('#sidebar');
