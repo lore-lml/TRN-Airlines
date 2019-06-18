@@ -3,8 +3,10 @@ include_once "server.php";
 include_once "user.php";
 global $result;
 
-$json = $_POST["method"]();
-echo $json;
+if(isset($_POST['method'])) {
+    $json = htmlentities(strip_tags($_POST["method"]), ENT_NOQUOTES)();
+    echo $json;
+}
 
 function registerUser(){
     global $result;
@@ -33,8 +35,9 @@ function registerUser(){
             throw new Exception();
         }
 
-        $email = mysqli_real_escape_string($conn, $_POST['email']);
-        $name = mysqli_real_escape_string($conn, $_POST['name']);
+        //Non c'è nessuna echo per la mail
+        $email = strip_tags(mysqli_real_escape_string($conn, $_POST['email']));
+        $name = htmlentities(strip_tags(mysqli_real_escape_string($conn, $_POST['name'])));
         $psw1 = $_POST['psw1'];
         $psw2 = $_POST['psw2'];
 
@@ -83,7 +86,7 @@ function login(){
             throw new Exception();
         }
 
-        $email = mysqli_real_escape_string($conn, $_POST['email']);
+        $email = strip_tags(mysqli_real_escape_string($conn, $_POST['email']));
         $psw = sha1($_POST['psw']);
 
         $sql = "SELECT name, password FROM users WHERE email = ? LIMIT 1";
@@ -177,7 +180,7 @@ function preorderSeat(){
             $result['cause'] = "session_expired";
             throw new Exception();
         }
-        $id = mysqli_real_escape_string($conn, $_POST['id']);
+        $id = strip_tags(mysqli_real_escape_string($conn, $_POST['id']));
         $email = $_SESSION['user']->{"getEmail"}();
 
         if(!userExist($conn, $email)){
@@ -377,7 +380,7 @@ function buySeats(){
         $result['cause'] = "db_error";
         return json_encode($result);
     }
-
+    $lock = false;
     try{
         if(!checkInactivity(false)){
             $result['cause'] = "session_expired";
@@ -388,7 +391,7 @@ function buySeats(){
         $cnt = 0;
         //SANITIZZO GLI ID
         foreach($_POST['ids'] as $id){
-            $ids[$cnt] = mysqli_real_escape_string($conn, $id);
+            $ids[$cnt] = strip_tags(mysqli_real_escape_string($conn, $id));
             $cnt++;
         }
 
@@ -407,8 +410,10 @@ function buySeats(){
         unset($id);
 
         mysqli_autocommit($conn, false);
+        //mysqli_query($conn, "LOCK TABLES seats WRITE");
+        $lock = true;
         //CERCO TUTTI I BIGLIETTI COMPRATI E CONTROLLO CHE I LORO ID NON SIANO PRESENTI IN QUELLI PASSATI
-        $sql = "SELECT seat_id FROM seats WHERE user_email <> ? FOR UPDATE";
+        $sql = "SELECT seat_id FROM seats WHERE user_email <> ?";
         $stmt = mysqli_prepare($conn, $sql);
         mysqli_stmt_bind_param($stmt, "s", $email);
         if(!mysqli_stmt_execute($stmt)){
@@ -468,7 +473,10 @@ function buySeats(){
             $result['redirect'] = "index.php?msg=".$result['cause'];
         }
     }
-
+    /*if($_SESSION['user']->{"getName"}() === "U1")
+        sleep(5);
+    if($lock)
+        mysqli_query($conn, "UNLOCK TABLES");*/
     mysqli_autocommit($conn, true);
     mysqli_close($conn);
     return json_encode($result);
@@ -481,7 +489,7 @@ function buildQueriesForBuying(array $ids, string $email): array {
     $queries = array();
     foreach ($ids as $id){
         $sql = "INSERT INTO seats(seat_id, state, user_email) VALUES('$id','bought','$email') "
-            ."ON DUPLICATE KEY UPDATE state='bought', user_email = '$email'";
+            ."ON DUPLICATE KEY UPDATE state='bought'";
         $queries[$cnt++] = $sql;
     }
 

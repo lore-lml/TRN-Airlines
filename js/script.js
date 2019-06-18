@@ -1,6 +1,7 @@
 const AJAXURL = "php/ajax_request.php";
 const INDEX = "index.php";
 const COOKIE_DISABLED = "cookies_disabled.html";
+
 $(document).ready(function () {
     $('#sidebarCollapse').click(function () {
         let sidebar = $('#sidebar');
@@ -55,7 +56,7 @@ $(document).ready(function () {
 });
 
 function areCookiesEnabled() {
-    let enabled = (navigator.cookieEnabled) ? true : false;
+    let enabled = navigator.cookieEnabled;
     if(!enabled)
         window.location.href = COOKIE_DISABLED;
 }
@@ -112,11 +113,10 @@ function doRegisterRequest(name, email, psw1, psw2){
 
     $.post(AJAXURL, getRegisterJSON("registerUser", name, email, psw1, psw2))
         .done(function (data) {
-            data = JSON.parse(data);
+            data = parseJSON(data);
             let res = data["result"];
             if(res) {
-                window.location.href = INDEX;
-                //location.reload();
+                success();
                 return;
             }
             let cause = data["cause"];
@@ -226,11 +226,10 @@ function doLoginRequest(email, psw) {
             psw: psw
         })
         .done(function (data) {
-            data = JSON.parse(data);
+            data = parseJSON(data);
             let res = data["result"];
             if(res) {
-                window.location.href = INDEX;
-                //location.reload();
+                success();
                 return;
             }
             let cause = data["cause"];
@@ -261,7 +260,7 @@ function logout() {
     areCookiesEnabled();
     $.post(AJAXURL, {method: "logout"})
         .done(function (){
-            window.location.href = INDEX;
+            success();
             //location.reload();
         })
         .fail(function () {
@@ -279,10 +278,13 @@ function doPreorderSeat(checkbox){
             id: checkbox.attr("id")
         })
         .done(function (data){
-            data = JSON.parse(data);
+            data = parseJSON(data);
             let res = data["result"];
 
-            if(res) return;
+            if(res){
+                $('#error-field').text("");
+                return;
+            }
             let cause = data['cause'];
             switch (cause) {
                 case "already_bought":
@@ -314,11 +316,12 @@ function doCancelSeat(checkbox){
             id: checkbox.attr("id")
         })
         .done(function (data){
-            data = JSON.parse(data);
+            data = parseJSON(data);
             let res = data["result"];
 
             if(res){
                 checkbox.parent().removeAttr("state");
+                $('#error-field').text("");
                 return;
             }
 
@@ -326,6 +329,10 @@ function doCancelSeat(checkbox){
             switch (cause) {
                 case "session_expired":
                     window.location.href = data['redirect'];
+                    break;
+                case "not_your_seat":
+                    $("#error-field").text("Il posto era già stato prenotato da altri");
+                    checkbox.parent().attr("state", "preordered");
                     break;
                 default:
                     alert("Qualcosa è andato storto: " + cause);
@@ -341,11 +348,11 @@ function cancelPreorderedSeats(){
     areCookiesEnabled();
     $.post(AJAXURL, {method: "cancelPreorderedSeats"})
         .done(function (data){
-            data = JSON.parse(data);
+            data = parseJSON(data);
             let res = data["result"];
 
             if(res){
-                window.location.href = INDEX;
+                success();
                 //location.reload();
                 return;
             }
@@ -386,11 +393,11 @@ function buySeats() {
             ids: ids
         })
         .done(function (data) {
-            data = JSON.parse(data);
+            data = parseJSON(data);
             let res = data["result"];
 
             if(res){
-                window.location.href = INDEX;
+                success();
                 //location.reload();
                 return;
             }
@@ -405,6 +412,9 @@ function buySeats() {
                 case "session_expired":
                     window.location.href = data['redirect'];
                     break;
+                case "update_error":
+                    $('#error-field').text("C'è stato un errore durante la transazione");
+                    break;
                 default:
                     alert("Qualcosa è andato storto: " + cause);
                     break;
@@ -413,4 +423,18 @@ function buySeats() {
         .fail(function () {
             alert("Qualcosa è andato storto");
         });
+}
+
+function parseJSON(data){
+    let index = data.indexOf("{");
+    if(index === -1)
+        location.reload();
+
+    data = data.substring(index);
+    return JSON.parse(data);
+}
+
+function success(){
+    window.location.href = INDEX;
+    $('#error-field').text("");
 }

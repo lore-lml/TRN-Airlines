@@ -33,7 +33,7 @@ function redirect(string $resource, string $key = "msg", string $value = ""){
     $cwd = preg_split('/\\\|\//', getcwd());
     header("Location: https://" . $_SERVER["HTTP_HOST"] ."/".$cwd[sizeof($cwd)-1]. "/$resource$key$value");
     //header("Location: https://localhost/TRN-Airlines/index.php?msg=not_your_seat");
-    exit;
+    //exit;
 }
 
 function connectDb(){
@@ -63,19 +63,6 @@ function destroyUserSession(bool $session_start = true){
     session_destroy();
 }
 
-function checkOrSetCookie(){
-    if (isset($_GET['cookiecheck'])) {
-        if (isset($_COOKIE['testcookie'])) {
-            print "Cookies are enabled";
-        } else {
-            redirect("cookies_disabled");
-        }
-    } else {
-        setcookie("user", "enabled", time() + 3600);
-        redirect("index.php", "cookiecheck=1");
-    }
-}
-
 function checkInactivity(bool $redirect = true) : bool {
     session_start();
     $t=time();
@@ -91,7 +78,7 @@ function checkInactivity(bool $redirect = true) : bool {
     if($new || $inactivity > INACTIVITY_TIME){
         destroyUserSession(false);
         if(!$new && $redirect)
-            redirect("index.php", "session_expired");
+            redirect("index.php", "msg", "session_expired");
         return false;
     }
 
@@ -206,9 +193,9 @@ function validateId(string $id){
     $row = $results[2];
 
     $col -= ord('A');
-    if($col >= COL || $col < 0 )
+    if($col > COL || $col < 0 )
         return false;
-    if($row >= ROW || $row < 0)
+    if($row > ROW || $row < 0)
         return false;
 
     return true;
