@@ -68,10 +68,10 @@ function registerUser(){
     let psw1 = $('#registerPassword').val();
     let psw2 = $('#registerPassword2').val();
 
-    if(name == ""){
+    /*if(name == ""){
         $("#warningName").text("Nome non inserito");
         return;
-    }else{$("#warningName").text("");}
+    }else{$("#warningName").text("");}*/
 
     if(email == ""){
         $("#warningEmail").text("Email non inserita");
@@ -134,9 +134,9 @@ function doRegisterRequest(name, email, psw1, psw2){
                 case "no_psw2":
                     $("#warningPsw2").text("Password non inserita");
                     break;
-                case "empty_name":
+                /*case "empty_name":
                     $("#warningName").text("Nome non inserito");
-                    break;
+                    break;*/
                 case "psw_mismatch":
                     $("#warningPsw2").text("Le due password non coincidono");
                     break;

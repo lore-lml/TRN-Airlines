@@ -31,14 +31,14 @@ function registerUser(){
         }else if(!isset($_POST['psw2'])){
             $result['cause'] = "no_psw2";
             throw new Exception();
-        }else if(!isset($_POST['name'])){
+        }/*else if(!isset($_POST['name'])){
             $result['cause'] = "empty_name";
             throw new Exception();
-        }
+        }*/
 
         //Non c'è nessuna echo per la mail
         $email = strip_tags(mysqli_real_escape_string($conn, $_POST['email']));
-        $name = htmlentities(strip_tags(mysqli_real_escape_string($conn, $_POST['name'])));
+        //$name = htmlentities(strip_tags(mysqli_real_escape_string($conn, $_POST['name'])));
         $psw1 = $_POST['psw1'];
         $psw2 = $_POST['psw2'];
 
@@ -47,9 +47,9 @@ function registerUser(){
             throw new Exception();
         }
         $psw1 = sha1(salt.$psw1);
-        $sql = "INSERT INTO users(email, password, name) VALUES(?,?,?)";
+        $sql = "INSERT INTO users(email, password/*, name*/) VALUES(?,?/*,?*/)";
         $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "sss", $email, $psw1, $name);
+        mysqli_stmt_bind_param($stmt, "ss", $email, $psw1/*, $name*/);
 
         //UTENTE GIA ESISTENTE
         if(!mysqli_stmt_execute($stmt)){
@@ -57,8 +57,7 @@ function registerUser(){
             throw new Exception();
         }
 
-
-        $user = new user($email, $name);
+        $user = new user($email);
         saveUserSession($user);
         $result['result'] = true;
     }catch (Exception $e){
@@ -90,7 +89,7 @@ function login(){
         $email = strip_tags(mysqli_real_escape_string($conn, $_POST['email']));
         $psw = sha1(salt.$_POST['psw']);
 
-        $sql = "SELECT name, password FROM users WHERE email = ? LIMIT 1";
+        $sql = "SELECT /*name, */password FROM users WHERE email = ? LIMIT 1";
         $stmt = mysqli_prepare($conn, $sql);
         mysqli_stmt_bind_param($stmt, "s", $email);
 
@@ -100,15 +99,16 @@ function login(){
             throw new Exception();
         }
 
-        mysqli_stmt_bind_result($stmt, $name, $password);
+        //mysqli_stmt_bind_result($stmt, $name, $password);
+        mysqli_stmt_bind_result($stmt, $password);
         mysqli_stmt_fetch($stmt);
-        if($name == null || $psw !== $password){
+        if(/*$name == null ||*/ $psw !== $password){
             $result['cause'] = "mismatch";
             throw new Exception();
         }
-        //mysqli_stmt_close($stmt);
 
-        $user = new user($email, $name);
+
+        $user = new user($email);
         //Controllo se devo salvare la sessione dopo che il browser viene chiuso
         if(isset($_POST['remember'])){
             $rememberMe = strip_tags($_POST['remember']);
@@ -297,7 +297,7 @@ function cancelSeat(){
         }
 
         //PROVO A CANCELLARE LA PRENOTAZIONE
-        $sql = "DELETE FROM seats WHERE seat_id = ? AND user_email = ?";
+        $sql = "DELETE FROM seats WHERE seat_id = ? AND user_email = ? AND state = 'preordered'";
         $stmt = mysqli_prepare($conn, $sql);
         mysqli_stmt_bind_param($stmt, "ss", $id, $email);
 
@@ -445,11 +445,7 @@ function buySeats(){
         }
         foreach ($queries as $sql){
             $stmt = mysqli_prepare($conn,$sql);
-
-            if(!mysqli_stmt_execute($stmt)){
-                $result['cause'] = "db_error";
-                throw new Exception();
-            }
+            mysqli_stmt_execute($stmt);
 
             if(mysqli_stmt_affected_rows($stmt) <= 0){
                 $result['cause'] = "update_error";

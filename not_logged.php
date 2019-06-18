@@ -199,11 +199,11 @@
         </div>
 
 
-        <div class="form-group">
+        <!--<div class="form-group">
             <label for="registerName">Nome</label>
             <input type="text" class="form-control" id="registerName" placeholder="Inserisci il tuo nome">
             <p class="warning-field" id="warningName"></p>
-        </div>
+        </div>-->
         <div class="form-group">
             <label for="registerEmail">Email</label>
             <input type="email" class="form-control" id="registerEmail" aria-describedby="emailHelp" placeholder="Inserisci la tua email">

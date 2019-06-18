@@ -6,10 +6,12 @@ class user
     private $email;
     private $name;
 
-    function __construct(string $email, string $name)
+    function __construct(string $email)
     {
         $this->email = $email;
-        $this->name = $name;
+
+        $split = preg_split("/@/", $email);
+        $this->name = $split[0];
     }
 
     public function getEmail(): string
