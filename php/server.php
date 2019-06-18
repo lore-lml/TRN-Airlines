@@ -13,6 +13,11 @@ define('INACTIVITY_TIME', 120);
 global $_seatsMap;
 global $_numberOfSeatsPerState;
 
+if(COL > 26){
+    echo "<h1>Numero di colonne impostate troppo elevato</h1>";
+    exit;
+}
+
 function redirectHTTPSifNeeded(){
     if(!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on")
     {

@@ -389,7 +389,7 @@ function buySeats(){
         $result['cause'] = "db_error";
         return json_encode($result);
     }
-    $lock = false;
+
     try{
         if(!checkInactivity(false)){
             $result['cause'] = "session_expired";
@@ -419,9 +419,7 @@ function buySeats(){
         unset($id);
 
         mysqli_autocommit($conn, false);
-        //mysqli_query($conn, "LOCK TABLES seats WRITE");
-        $lock = true;
-        //CERCO TUTTI I BIGLIETTI COMPRATI E CONTROLLO CHE I LORO ID NON SIANO PRESENTI IN QUELLI PASSATI
+        //CERCO TUTTI I BIGLIETTI CHE NON SIANO I MIEI E CONTROLLO CHE I LORO ID NON SIANO PRESENTI IN QUELLI PASSATI
         $sql = "SELECT seat_id FROM seats WHERE user_email <> ?";
         $stmt = mysqli_prepare($conn, $sql);
         mysqli_stmt_bind_param($stmt, "s", $email);
@@ -482,10 +480,7 @@ function buySeats(){
             $result['redirect'] = "index.php?msg=".$result['cause'];
         }
     }
-    if($_SESSION['user']->{"getName"}() === "U1")
-        sleep(5);
-    /*if($lock)
-        mysqli_query($conn, "UNLOCK TABLES");*/
+
     mysqli_autocommit($conn, true);
     mysqli_close($conn);
     return json_encode($result);
