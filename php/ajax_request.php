@@ -295,9 +295,23 @@ function cancelSeat(){
             $result['cause'] = "invalid_id";
             throw new Exception();
         }
+        mysqli_autocommit($conn, false);
+
+        //Controllo se il posto scelto si trova su stato PREORDERED
+        $sql = "SELECT state FROM seats WHERE seat_id = ? LIMIT 1 FOR UPDATE";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "s", $id);
+        mysqli_stmt_execute($stmt);
+        $res = mysqli_stmt_get_result($stmt);
+        $row = mysqli_fetch_row($res);
+        if(isset($row[0]) && $row[0] === 'bought'){
+            $result['cause'] = "your_seat";
+            throw new Exception();
+        }
+
 
         //PROVO A CANCELLARE LA PRENOTAZIONE
-        $sql = "DELETE FROM seats WHERE seat_id = ? AND user_email = ? AND state = 'preordered'";
+        $sql = "DELETE FROM seats WHERE seat_id = ? AND user_email = ?";
         $stmt = mysqli_prepare($conn, $sql);
         mysqli_stmt_bind_param($stmt, "ss", $id, $email);
 
@@ -318,11 +332,14 @@ function cancelSeat(){
         mysqli_autocommit($conn, true);
     }catch (Exception $e){
         $result['result'] = false;
-        if($result['cause'] === "session_expired"){
+        if($result['cause'] !== "session_expired") {
+            mysqli_rollback($conn);
+            mysqli_autocommit($conn, true);
+        }else{
             $result['redirect'] = "index.php?msg=".$result['cause'];
         }
     }
-
+    mysqli_autocommit($conn, true);
     mysqli_close($conn);
     return json_encode($result);
 }

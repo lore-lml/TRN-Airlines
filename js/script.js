@@ -335,6 +335,13 @@ function doCancelSeat(checkbox){
                     $("#error-field").text("Il posto era già stato prenotato da altri");
                     checkbox.parent().attr("state", "preordered");
                     break;
+                case "your_seat":
+                    $("#error-field").text("Hai già comprato questo posto");
+                    checkbox.prop("disabled", true);
+                    checkbox.prop("checked", false);
+                    checkbox.parent().attr("disabled", "");
+                    checkbox.parent().attr("state", "bought");
+                    break;
                 default:
                     alert("Qualcosa è andato storto: " + cause);
                     break;

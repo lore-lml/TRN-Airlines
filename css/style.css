@@ -239,16 +239,6 @@ table.seat-grid{
     height: 50px;
 }
 
-.my-checkbox[disabled][state="unavailable"] label{
-    background: url(../icons/disabled_seat.png) no-repeat center;
-    background-size: cover;
-}
-
-.my-checkbox[disabled][state="unavailable"] label:hover{
-    background: #e2e2e2 url(../icons/disabled_seat.png) no-repeat center;
-    background-size: cover;
-}
-
 .my-checkbox[disabled][state="bought"] label{
     background: url(../icons/bought_seat.png) no-repeat center;
     background-size: cover;
