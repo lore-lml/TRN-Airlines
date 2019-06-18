@@ -368,8 +368,6 @@ table.seat-grid tr{
 .popup-content{
   position: relative;
   padding: 10px 30px 50px;
-  height: 400px;
-  width: 650px;
   background: #fff;
   border-radius: 10px;
 }
@@ -403,7 +401,16 @@ table.seat-grid tr{
     width: 850px;
 }
 
+#login-popup .popup-content{
+    height: 450px;
+    width: 850px;
+}
+
 .warning-field{
     font-size: 1em;
     color: red;
+}
+
+#loginBtn{
+    margin: 10px 0;
 }

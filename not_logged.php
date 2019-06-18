@@ -183,9 +183,10 @@
             <input type="checkbox" class="form-check-input" id="loginCheck">
             <label class="form-check-label" for="loginCheck">Ricordami</label>
         </div>
+        <div>
+            <p class="warning-field" id="warningDefault-log"></p>
+        </div>
         <button class="btn btn-outline-primary" id="loginBtn">Login</button>
-        <p class="warning-field" id="warningDefault-log"></p>
-
     </div>
 </div>
 
@@ -218,8 +219,10 @@
             <input type="password" class="form-control" id="registerPassword2" placeholder="Password">
             <p class="warning-field" id="warningPsw2"></p>
         </div>
+        <div>
+            <p class="warning-field" id="warningDefault"></p>
+        </div>
         <button class="btn btn-outline-primary" id="registerBtn">Registrati</button>
-        <p class="warning-field" id="warningDefault"></p>
     </div>
 </div>
 

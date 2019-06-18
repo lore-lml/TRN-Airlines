@@ -41,7 +41,10 @@ function connectDb(){
     return $conn;
 };
 
-function saveUserSession(user $user){
+function saveUserSession(user $user, bool $keepSessionAlive = false){
+    if($keepSessionAlive)
+        ini_set('session.cookie_lifetime', INACTIVITY_TIME);
+
     session_start();
     $_SESSION['user'] = $user;
     $_SESSION['time'] = time();

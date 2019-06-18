@@ -223,7 +223,8 @@ function doLoginRequest(email, psw) {
         {
             method: "login",
             email: email,
-            psw: psw
+            psw: psw,
+            remember: $('#loginCheck').is(":checked")
         })
         .done(function (data) {
             data = parseJSON(data);
@@ -426,9 +427,14 @@ function buySeats() {
 }
 
 function parseJSON(data){
-    let index = data.indexOf("{");
-    if(index === -1)
-        location.reload();
+    let index = data.indexOf("{\"result\"");
+    if(index === -1) {
+        let index2 = data.indexOf("{\"cause\"");
+        if(index2 === -1)
+            location.reload();
+        else
+            index = index2;
+    }
 
     data = data.substring(index);
     return JSON.parse(data);
