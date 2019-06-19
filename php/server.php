@@ -103,6 +103,20 @@ function printError(){
                 break;
             case "session_expired":
                 echo "La tua sessione è scaduta per inattività";
+                break;
+        }
+    }
+}
+
+function printSuccess(){
+    if(isset($_GET['succ'])){
+        switch ($_GET['succ']) {
+            case "seats_bought":
+                echo "Hai acquistato i tuoi posti con successo";
+                break;
+            case "seats_deleted":
+                echo "Le tue prenotazioni sono state rimosse con successo";
+                break;
         }
     }
 }
@@ -191,6 +205,24 @@ function getSeatMap(): array{
     return $seatsMap;
 }
 
+function validatePassword(string $psw): bool{
+    $lower = false;
+    $upperOrDigit = false;
+
+    for($i = 0; $i < strlen($psw); $i++){
+        $char = $psw{$i};
+        if(is_numeric($char) || $char === strtoupper($char))
+            $upperOrDigit = true;
+        if($char === strtolower($char))
+            $lower = true;
+
+        if($lower && $upperOrDigit)
+            return true;
+    }
+
+    return false;
+}
+
 function validateId(string $id){
 
     $results = preg_split("/_/", $id);
@@ -208,12 +240,6 @@ function validateId(string $id){
 
     return true;
 }
-
-/*function unavailableSeat(string $id): string {
-    return '" disabled state="unavailable"><input type="checkbox" disabled id="'.$id.'" autocomplete="off"/>
-                              <label for="'.$id.'"></label>
-                            </td>';
-}*/
 
 function freeSeat(string $id, bool $disabled): string {
     if($disabled){

@@ -84,6 +84,7 @@ include_once "php/user.php";?>
                           </ul>
                           -->
                 <h5 id="error-field"><?php printError() ?></h5>
+                <h5 id="success-field"><?php printSuccess() ?></h5>
             </div>
         </nav>
 

@@ -36,8 +36,7 @@ function registerUser(){
             throw new Exception();
         }*/
 
-        //Non c'è nessuna echo per la mail
-        $email = strip_tags(mysqli_real_escape_string($conn, $_POST['email']));
+        $email = htmlentities(strip_tags(mysqli_real_escape_string($conn, $_POST['email'])));
         //$name = htmlentities(strip_tags(mysqli_real_escape_string($conn, $_POST['name'])));
         $psw1 = $_POST['psw1'];
         $psw2 = $_POST['psw2'];
@@ -122,27 +121,10 @@ function login(){
     }catch (Exception $e){
         $result['result'] = false;
     }
-
+    if(isset($stmt) && $stmt)
+        mysqli_stmt_close($stmt);
     mysqli_close($conn);
     return json_encode($result);
-}
-
-function validatePassword(string $psw): bool{
-    $lower = false;
-    $upperOrDigit = false;
-
-    for($i = 0; $i < strlen($psw); $i++){
-        $char = $psw{$i};
-        if(is_numeric($char) || $char === strtoupper($char))
-            $upperOrDigit = true;
-        if($char === strtolower($char))
-            $lower = true;
-
-        if($lower && $upperOrDigit)
-            return true;
-    }
-
-    return false;
 }
 
 function logout(){
@@ -211,12 +193,12 @@ function preorderSeat(){
         mysqli_stmt_execute($stmt);
         $affected_rows = mysqli_stmt_affected_rows($stmt);
 
-        //Se non funziona vuol dire che il posto è gia stato prenotato
+        //Se non funziona vuol dire che il posto è gia stato prenotato o comprato
         if($affected_rows == -1){
             //$err = mysqli_stmt_error($stmt);
             mysqli_stmt_close($stmt);
 
-            $sql = "SELECT state FROM seats WHERE seat_id = ? FOR UPDATE";
+            $sql = "SELECT state, user_email FROM seats WHERE seat_id = ? FOR UPDATE";
             $stmt1 = mysqli_prepare($conn, $sql);
             mysqli_stmt_bind_param($stmt1, "s", $id);
 
@@ -233,6 +215,10 @@ function preorderSeat(){
                 $result['cause']="already_bought";
                 throw new Exception();
             }
+            if(isset($row[1]) && $row[1] !== $email){
+                $result['result'] = true;
+                $result['success-msg'] = "overwritten";
+            }
             mysqli_stmt_close($stmt1);
 
             $sql = "UPDATE seats SET user_email = ?, state='preordered' WHERE seat_id = ?";
@@ -242,14 +228,17 @@ function preorderSeat(){
             if(!mysqli_stmt_execute($stmt2)){
                 //$err = mysqli_stmt_error($stmt2);
                 $result['cause'] = "db_error";
+                unset($result['success-msg']);
                 throw new Exception();
             }
 
 
             mysqli_stmt_close($stmt2);
+        }else{
+            $result['result'] = true;
+            $result['success-msg'] = "success";
         }
 
-        $result['result'] = true;
     }catch (mysqli_sql_exception $e){
         $result['result'] = false;
         $result['cause'] = "db_error";

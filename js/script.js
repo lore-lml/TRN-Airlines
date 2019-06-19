@@ -16,6 +16,16 @@ $(document).ready(function () {
         }
     });
 
+    $(this).keypress(function(event){
+        if(event.which === 13){
+            if($('#login-popup').prop('hidden') === false){
+                login();
+            }else if($('#register-popup').prop('hidden') === false){
+                registerUser();
+            }
+        }
+    });
+
     $('#login-btn').click(function(){
       $('#login-popup').prop('hidden', false);
       return false;
@@ -122,9 +132,6 @@ function doRegisterRequest(name, email, psw1, psw2){
             let cause = data["cause"];
 
             switch (cause) {
-                case "db_error":
-                    $("#warningDefault").text("Connessione al database rifiutata");
-                    break;
                 case "no_email":
                     $("#warningEmail").text("Email non inserita o non valida");
                     break;
@@ -202,7 +209,6 @@ function login(){
         return;
     }else{
         if(!validateEmail(email)){
-            //show warning
             $("#warningEmail-log").text("Email non valida");
             return;
         }else
@@ -234,10 +240,8 @@ function doLoginRequest(email, psw) {
                 return;
             }
             let cause = data["cause"];
+
             switch (cause) {
-                case "db_error":
-                    $("#warningDefault-log").text("Connessione al database rifiutata");
-                    break;
                 case "no_email":
                     $("#warningEmail-log").text("Email non inserita o non valida");
                     break;
@@ -262,7 +266,6 @@ function logout() {
     $.post(AJAXURL, {method: "logout"})
         .done(function (){
             success();
-            //location.reload();
         })
         .fail(function () {
             alert("Qualcosa è andato storto");
@@ -283,9 +286,17 @@ function doPreorderSeat(checkbox){
             let res = data["result"];
 
             if(res){
-                $('#error-field').text("");
+                if(data['success-msg'] === "success") {
+                    $('#error-field').text("");
+                    $('#success-field').text("Preordine effettuato con successo!");
+                }
+                else if(data['success-msg'] === "overwritten"){
+                    $('#success-field').text("");
+                    $('#error-field').text("Hai sovrascritto la prenotazione di un altro utente").css("color", "#FF5722");
+                }
                 return;
             }
+            $('#success-field').text("");
             let cause = data['cause'];
             switch (cause) {
                 case "already_bought":
@@ -323,9 +334,10 @@ function doCancelSeat(checkbox){
             if(res){
                 checkbox.parent().removeAttr("state");
                 $('#error-field').text("");
+                $('#success-field').text("Preordine cancellato con successo!");
                 return;
             }
-
+            $('#success-field').text("");
             let cause = data['cause'];
             switch (cause) {
                 case "session_expired":
@@ -364,6 +376,8 @@ function cancelPreorderedSeats(){
                 //location.reload();
                 return;
             }
+
+            $('#success-field').text("");
             let cause = data['cause'];
             switch (cause) {
                 case "session_expired":
@@ -393,6 +407,10 @@ function buySeats() {
            ids[next++] = box.attr("id");
     });
 
+    if(next === 0){
+        $('#error-field').text("Non hai nessun posto da acquistare");
+        return;
+    }
     console.log(ids);
 
     $.post(AJAXURL,
@@ -409,6 +427,7 @@ function buySeats() {
                 //location.reload();
                 return;
             }
+            $('#success-field').text("");
             let cause = data['cause'];
             switch (cause) {
                 case "invalid_email":
@@ -449,5 +468,4 @@ function parseJSON(data){
 
 function success(){
     window.location.href = INDEX;
-    $('#error-field').text("");
 }
