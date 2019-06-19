@@ -171,7 +171,7 @@
 
         <div class="form-group">
             <label for="loginEmail">Email</label>
-            <input type="email" class="form-control" id="loginEmail" aria-describedby="emailHelp" placeholder="Inserisci la tua email">
+            <input type="email" class="form-control" id="loginEmail" aria-describedby="emailHelp" placeholder="Inserisci la tua email" maxlength = "50">
             <p class="warning-field" id="warningEmail-log"></p>
         </div>
         <div class="form-group">
@@ -206,7 +206,7 @@
         </div>-->
         <div class="form-group">
             <label for="registerEmail">Email</label>
-            <input type="email" class="form-control" id="registerEmail" aria-describedby="emailHelp" placeholder="Inserisci la tua email">
+            <input type="email" class="form-control" id="registerEmail" aria-describedby="emailHelp" placeholder="Inserisci la tua email" maxlength = "50">
             <p class="warning-field" id="warningEmail"></p>
         </div>
         <div class="form-group">

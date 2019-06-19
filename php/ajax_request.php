@@ -19,7 +19,7 @@ function registerUser(){
     }
 
     try{
-        if(!isset($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){
+        if(!isset($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) || strlen($_POST['email']) > 50){
             $result['cause'] = "no_email";
             throw new Exception();
         }else if(!isset($_POST['psw1'])){
@@ -77,7 +77,7 @@ function login(){
     }
 
     try{
-        if(!isset($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){
+        if(!isset($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) || strlen($_POST['email']) > 50){
             $result['cause'] = "no_email";
             throw new Exception();
         }else if(!isset($_POST['psw'])){
