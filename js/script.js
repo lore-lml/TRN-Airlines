@@ -126,7 +126,7 @@ function doRegisterRequest(name, email, psw1, psw2){
             data = parseJSON(data);
             let res = data["result"];
             if(res) {
-                success();
+                success(INDEX);
                 return;
             }
             let cause = data["cause"];
@@ -236,7 +236,7 @@ function doLoginRequest(email, psw) {
             data = parseJSON(data);
             let res = data["result"];
             if(res) {
-                success();
+                success(INDEX);
                 return;
             }
             let cause = data["cause"];
@@ -265,7 +265,7 @@ function logout() {
     areCookiesEnabled();
     $.post(AJAXURL, {method: "logout"})
         .done(function (){
-            success();
+            success(INDEX);
         })
         .fail(function () {
             alert("Qualcosa è andato storto");
@@ -470,7 +470,7 @@ function parseJSON(data){
     return JSON.parse(data);
 }
 
-function success(res = INDEX){
+function success(res){
     window.location.href = res;
 }
 
