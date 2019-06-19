@@ -368,6 +368,7 @@ function cancelPreorderedSeats(bool $sessionStart = true){
         }
 
         $result['result'] = true;
+        $result['success-msg'] = "index.php?succ=seats_deleted";
     }catch (mysqli_sql_exception $e){
         $result['result'] = false;
         $result['cause'] = "db_error";
@@ -461,6 +462,7 @@ function buySeats(){
 
 
         $result['result'] = true;
+        $result['success-msg'] = "index.php?succ=seats_bought";
     }catch (mysqli_sql_exception $e){
         $result['result'] = false;
         $result['cause'] = "db_error";

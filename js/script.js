@@ -372,7 +372,7 @@ function cancelPreorderedSeats(){
             let res = data["result"];
 
             if(res){
-                success();
+                success(data['success-msg']);
                 //location.reload();
                 return;
             }
@@ -423,7 +423,7 @@ function buySeats() {
             let res = data["result"];
 
             if(res){
-                success();
+                success(data['success-msg']);
                 //location.reload();
                 return;
             }
@@ -466,6 +466,6 @@ function parseJSON(data){
     return JSON.parse(data);
 }
 
-function success(){
-    window.location.href = INDEX;
+function success(res = INDEX){
+    window.location.href = res;
 }
