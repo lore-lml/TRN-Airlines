@@ -3,9 +3,9 @@ include_once 'user.php';
 include_once 'seat.php';
 
 define('host', 'localhost');
-define('admin', 's267541');
-define('psw', 'smargein');
-define('db', 's267541');
+define('admin', 'root');
+define('psw', '');
+define('db', 'trnairlines');
 define('COL', 6);
 define('ROW', 10);
 define('INACTIVITY_TIME', 120);
