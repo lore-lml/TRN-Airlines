@@ -24,7 +24,7 @@ if (isset($_COOKIE['user'])) {
         setcookie("user", "enabled", time() + 3600);
         if(isset($_GET['msg'])){
             $cwd = preg_split('/\\\|\//', getcwd());
-            header("Location: https://" . $_SERVER["HTTP_HOST"] ."/".$cwd[sizeof($cwd)-1]. "/index.php?msg={$_GET['msg']}&cookiecheck=1");
+            header("Location: index.php?msg={$_GET['msg']}&cookiecheck=1");
             exit;
         }
         redirect("index.php", "cookiecheck", "1");

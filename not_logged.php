@@ -113,7 +113,7 @@
                 <i class="fas fa-plane-departure" id="seat-summary"></i>
                 <h4>Riepilogo posti</h4>
                 <div class="summary">
-                    <p><strong>Posti Totali: <?php echo COL*ROW;?>
+                    <p id="totalSeat"><strong>Posti Totali: <span><?php echo COL*ROW;?></span>
                     </strong></p>
                     <div class="summary-item">
                         <p>Posti acquistati: </p>

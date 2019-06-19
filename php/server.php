@@ -3,9 +3,9 @@ include_once 'user.php';
 include_once 'seat.php';
 
 define('host', 'localhost');
-define('admin', 'root');
-define('psw', '');
-define('db', 'trnairlines');
+define('admin', 's267541');
+define('psw', 'smargein');
+define('db', 's267541');
 define('COL', 6);
 define('ROW', 10);
 define('INACTIVITY_TIME', 120);
@@ -35,10 +35,10 @@ function redirect(string $resource, string $key = "msg", string $value = ""){
     else
         $key ="?$key=";
 
-    $cwd = preg_split('/\\\|\//', getcwd());
-    header("Location: https://" . $_SERVER["HTTP_HOST"] ."/".$cwd[sizeof($cwd)-1]. "/$resource$key$value");
+    //$cwd = preg_split('/\\\|\//', getcwd());
+    header("Location: $resource$key$value");
     //header("Location: https://localhost/TRN-Airlines/index.php?msg=not_your_seat");
-    //exit;
+    exit;
 }
 
 function connectDb(){

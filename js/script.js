@@ -294,17 +294,19 @@ function doPreorderSeat(checkbox){
                     $('#success-field').text("");
                     $('#error-field').text("Hai sovrascritto la prenotazione di un altro utente").css("color", "#FF5722");
                 }
+                updateStats(0, 1, -1);
                 return;
             }
             $('#success-field').text("");
             let cause = data['cause'];
             switch (cause) {
                 case "already_bought":
-                    $("#error-field").text("Il posto è già stato comprato e non e' possibile prenotarlo!");
+                    $("#error-field").text("Il posto è già stato comprato e non è possibile prenotarlo!");
                     checkbox.prop("disabled", true);
                     checkbox.prop("checked", false);
                     checkbox.parent().attr("disabled", "");
                     checkbox.parent().attr("state", "bought");
+                    updateStats(1, 0, -1);
                     break;
                 case "session_expired":
                     window.location.href = data['redirect'];
@@ -335,6 +337,7 @@ function doCancelSeat(checkbox){
                 checkbox.parent().removeAttr("state");
                 $('#error-field').text("");
                 $('#success-field').text("Preordine cancellato con successo!");
+                updateStats(0, -1, 1);
                 return;
             }
             $('#success-field').text("");
@@ -346,6 +349,7 @@ function doCancelSeat(checkbox){
                 case "not_your_seat":
                     $("#error-field").text("Il posto era già stato prenotato da altri");
                     checkbox.parent().attr("state", "preordered");
+                    updateStats(0, 1, -1);
                     break;
                 case "your_seat":
                     $("#error-field").text("Hai già comprato questo posto");
@@ -468,4 +472,42 @@ function parseJSON(data){
 
 function success(res = INDEX){
     window.location.href = res;
+}
+
+function updateStats(boughtInc, preorderedInc, freeInc){
+    if(isNaN(boughtInc) || isNaN(preorderedInc) || isNaN(freeInc))
+        return;
+
+    let totalSeat = parseInt($('#totalSeat span').text());
+    let bought = parseInt($('.progress>.bg-red').text());
+    let preordered = parseInt($('.progress>.bg-orange').text());
+    let free = parseInt($('.progress>.bg-success').text());
+
+    bought += boughtInc;
+    preordered += preorderedInc;
+    free += freeInc;
+
+    let freePerc, boughtPerc, preorderedPerc;
+    if(totalSeat !== 0){
+        freePerc = free/totalSeat === 0 ? 2 : free/totalSeat*100;
+        boughtPerc = bought/totalSeat === 0 ? 2 : bought/totalSeat*100;
+        preorderedPerc = preordered/totalSeat === 0 ? 2 : preordered/totalSeat*100;
+    }else{
+        freePerc = 2;
+        boughtPerc = 2;
+        preorderedPerc = 2;
+    }
+
+
+    $('.progress>.bg-red').text(""+bought);
+    $('.progress>.bg-red').attr("style", "width: " +boughtPerc+"%");
+    $('.progress>.bg-red').attr("aria-valuenow", ""+boughtPerc);
+
+    $('.progress>.bg-orange').text(""+preordered);
+    $('.progress>.bg-orange').attr("style", "width: " +preorderedPerc+"%");
+    $('.progress>.bg-orange').attr("aria-valuenow", ""+preorderedPerc);
+
+    $('.progress>.bg-success').text(""+free);
+    $('.progress>.bg-success').attr("style", "width: " +freePerc+"%");
+    $('.progress>.bg-success').attr("aria-valuenow", ""+freePerc);
 }
