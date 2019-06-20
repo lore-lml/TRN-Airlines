@@ -412,6 +412,7 @@ function buySeats() {
     });
 
     if(next === 0){
+        $('#success-field').text("");
         $('#error-field').text("Non hai nessun posto da acquistare");
         return;
     }
