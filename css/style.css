@@ -19,6 +19,27 @@ a:focus {
     text-decoration: none;
     transition: all 0.3s;
 }
+noscript.no-js{
+    display: block;
+    text-align: left;
+}
+.list-unstyled li>.no-js{
+    margin: 0 15px;
+    padding: 30px;
+    background: #181b20;
+    border-radius: 10%;
+}
+noscript.no-js p{
+    color: white;
+    font-size: 1em;
+}
+noscript.no-js i{
+    text-align: center;
+    display: block;
+    color: yellow;
+    font-size: 30px;
+    margin-bottom: 10px;
+}
 
 .bg-orange{
   background: #FF5722;
@@ -53,9 +74,15 @@ a:focus {
     margin: 40px 0;
 }
 
-i,
-span {
+i, span {
     display: inline-block;
+}
+
+#error-field{
+    color: red;
+}
+#success-field{
+    color: #28a745;
 }
 
 /* ---------------------------------------------------
@@ -187,36 +214,72 @@ table.seat-grid{
   display: none;
 }
 
-.my-checkbox img{
-  width: 50px;
-  height: 50px;
-  transition: .2s;
+.my-checkbox label{
+    background: url(../icons/free_seat.png) no-repeat center;
+    background-size: cover;
+    width: 53px;
+    height: 53px;
+    transition: .2s;
+    margin: 0;
 }
-.my-checkbox img:hover{
-  background:#e2e2e2;
+.my-checkbox label:hover{
+    background: #e2e2e2 url(../icons/free_seat.png) no-repeat center;
+    background-size: cover;
 }
-.my-checkbox :checked+label img{
-  content: url(../icons/my_seat.png);
-  width: 45px;
-  height: 45px;
+.my-checkbox :checked+label{
+    background: url(../icons/my_seat.png) no-repeat center;
+    background-size: cover;
+    width: 50px;
+    height: 50px;
 }
-
-.my-checkbox[disabled] img{
-  content: url(../icons/disabled_seat.png);
-  width: 45px;
-  height: 45px;
-}
-
-.my-checkbox[disabled][state="bought"] img{
-  content: url(../icons/bought_seat.png);
-}
-
-.my-checkbox[disabled][state="preordered"] img{
-  content: url(../icons/preordered_seat.png);
+.my-checkbox :checked+label:hover{
+    background: #e2e2e2 url(../icons/my_seat.png) no-repeat center;
+    background-size: cover;
 }
 
+.my-checkbox[disabled] label{
+    width: 50px;
+    height: 50px;
+}
+
+.my-checkbox[disabled][state="bought"] label{
+    background: url(../icons/bought_seat.png) no-repeat center;
+    background-size: cover;
+}
+
+.my-checkbox[disabled][state="bought"] label:hover{
+    background: #e2e2e2 url(../icons/bought_seat.png) no-repeat center;
+    background-size: cover;
+}
+
+.my-checkbox[state="preordered"] label{
+    background: url(../icons/preordered_seat.png) no-repeat center;
+    background-size: cover;
+    width: 53px;
+    height: 53px;
+}
+
+.my-checkbox[state="preordered"] :checked+label{
+    background: url(../icons/my_seat.png) no-repeat center;
+    background-size: cover;
+    width: 50px;
+    height: 50px;
+}
+
+.my-checkbox[state="preordered"] :checked+label:hover{
+    background: #e2e2e2 url(../icons/my_seat.png) no-repeat center;
+    background-size: cover;
+}
+
+.my-checkbox[state="preordered"] label:hover{
+    background: #e2e2e2 url(../icons/preordered_seat.png) no-repeat center;
+    background-size: cover;
+}
+
+table.seat-grid tr{
+    text-align: center;
+}
 .seat-grid th{
-  text-align: center;
   padding-bottom: 10px;
 }
 .seat-grid-middle{
@@ -240,7 +303,7 @@ table.seat-grid{
 .legend{
   margin-top: 15%;
 }
-.lenged-item img, p{
+.legend-item img, p{
   display: inline;
 
 }
@@ -250,7 +313,7 @@ table.seat-grid{
 
 .body-right{
   text-align: center;
-  padding: 50px;
+  padding: 0 70px;
 }
 
 .logged{
@@ -276,7 +339,7 @@ table.seat-grid{
   color: #007bff;
 }
 
-#btn-prenota{
+#btn-compra {
   margin-top: 40px;
 }
 
@@ -298,8 +361,6 @@ table.seat-grid{
 .popup-content{
   position: relative;
   padding: 10px 30px 50px;
-  height: 400px;
-  width: 650px;
   background: #fff;
   border-radius: 10px;
 }
@@ -325,4 +386,24 @@ table.seat-grid{
 
 .close-popup:hover{
   color: red;
+}
+
+
+#register-popup .popup-content{
+    height: 500px;
+    width: 850px;
+}
+
+#login-popup .popup-content{
+    height: 450px;
+    width: 850px;
+}
+
+.warning-field{
+    font-size: 1em;
+    color: red;
+}
+
+#loginBtn{
+    margin: 10px 0;
 }
