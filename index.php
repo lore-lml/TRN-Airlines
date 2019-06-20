@@ -5,20 +5,20 @@ redirectHTTPSifNeeded();
 
 //CHECK COOKIES LOGIC
 if (isset($_COOKIE['user'])) {
-    if (checkInactivity())
+    if (checkInactivity(true))
         include "logged.php";
     else
         include "not_logged.php";
 }else{
     if (isset($_GET['cookiecheck'])) {
         if (isset($_COOKIE['user'])) {
-            if (checkInactivity())
+            if (checkInactivity(true))
                 include "logged.php";
             else
                 include "not_logged.php";
         } else {
             //echo $_COOKIE['user'];
-            redirect("cookies_disabled.html");
+            redirect("cookies_disabled.html","", "");
         }
     } else {
         setcookie("user", "enabled", time() + 3600);

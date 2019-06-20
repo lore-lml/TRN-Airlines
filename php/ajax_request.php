@@ -57,7 +57,7 @@ function registerUser(){
         }
 
         $user = new user($email);
-        saveUserSession($user);
+        saveUserSession($user, false);
         $result['result'] = true;
     }catch (Exception $e){
         $result['result'] = false;
@@ -130,7 +130,7 @@ function login(){
 function logout(){
     global $result;
 
-    destroyUserSession();
+    destroyUserSession(true);
     $result["result"] = true;
     return json_encode($result);
 }

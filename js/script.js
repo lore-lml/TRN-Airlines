@@ -289,12 +289,15 @@ function doPreorderSeat(checkbox){
                 if(data['success-msg'] === "success") {
                     $('#error-field').text("");
                     $('#success-field').text("Preordine effettuato con successo!");
+                    updateStats(0, 1, -1);
                 }
                 else if(data['success-msg'] === "overwritten"){
                     $('#success-field').text("");
                     $('#error-field').text("Hai sovrascritto la prenotazione di un altro utente").css("color", "#FF5722");
+                    if(checkbox.parent().attr("state") !== 'preordered')
+                        updateStats(0, 1, -1);
                 }
-                updateStats(0, 1, -1);
+
                 return;
             }
             $('#success-field').text("");

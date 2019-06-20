@@ -29,7 +29,7 @@ function redirectHTTPSifNeeded(){
     }
 };
 
-function redirect(string $resource, string $key = "msg", string $value = ""){
+function redirect(string $resource, string $key, string $value){
     if($value === "")
         $key = "";
     else
@@ -46,7 +46,7 @@ function connectDb(){
     return $conn;
 };
 
-function saveUserSession(user $user, bool $keepSessionAlive = false){
+function saveUserSession(user $user, bool $keepSessionAlive){
     if($keepSessionAlive)
         ini_set('session.cookie_lifetime', INACTIVITY_TIME);
 
@@ -55,7 +55,7 @@ function saveUserSession(user $user, bool $keepSessionAlive = false){
     $_SESSION['time'] = time();
 }
 
-function destroyUserSession(bool $session_start = true){
+function destroyUserSession(bool $session_start){
     if($session_start)
         session_start();
     $_SESSION = array();
@@ -71,7 +71,7 @@ function destroyUserSession(bool $session_start = true){
     session_destroy();
 }
 
-function checkInactivity(bool $redirect = true) : bool {
+function checkInactivity(bool $redirect) : bool {
     session_start();
     $t=time();
     $inactivity=0;
